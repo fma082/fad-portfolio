@@ -1,6 +1,17 @@
-/* ─── Icons (geometric, no SVG, no emoji) ────────────────────────────────── */
+import Link from "next/link";
 
-/* Token scale matrix — represents Primitives → Semantics → Components */
+/* ─── Utility ────────────────────────────────────────────────────────────── */
+
+function hexToRgb(hex: string): string {
+  return [
+    parseInt(hex.slice(1, 3), 16),
+    parseInt(hex.slice(3, 5), 16),
+    parseInt(hex.slice(5, 7), 16),
+  ].join(", ");
+}
+
+/* ─── Icons (geometric divs) ─────────────────────────────────────────────── */
+
 function DesignSystemsIcon() {
   return (
     <div className="flex gap-1.5">
@@ -19,7 +30,6 @@ function DesignSystemsIcon() {
   );
 }
 
-/* Streaming text lines — violet line = active cursor / response */
 function AIInterfaceIcon() {
   const lines: { w: string; cls: string }[] = [
     { w: "w-10", cls: "bg-fg-muted/50" },
@@ -36,7 +46,6 @@ function AIInterfaceIcon() {
   );
 }
 
-/* Two frames offset — Figma layer → code component */
 function DesignToCodeIcon() {
   return (
     <div className="relative w-10 h-8">
@@ -46,13 +55,9 @@ function DesignToCodeIcon() {
   );
 }
 
-/* ─── Data ───────────────────────────────────────────────────────────────── */
+/* ─── Pillars data ───────────────────────────────────────────────────────── */
 
-type Pillar = {
-  title: string;
-  Icon: () => React.JSX.Element;
-  body: string;
-};
+type Pillar = { title: string; Icon: () => React.JSX.Element; body: string };
 
 const pillars: Pillar[] = [
   {
@@ -72,7 +77,125 @@ const pillars: Pillar[] = [
   },
 ];
 
+/* ─── Projects data ──────────────────────────────────────────────────────── */
+
+type Project = {
+  slug: string;
+  title: string;
+  tags: string[];
+  type: string;
+  desc: string;
+  accent: string; // hex
+};
+
+const projects: Project[] = [
+  {
+    slug: "next-agent",
+    title: "Next Agent",
+    tags: ["AI SaaS", "Design System", "Next.js", "Product Design"],
+    type: "AI Agent Orchestration Platform · Personal product · Design + Dev",
+    desc: "A platform where teams deploy, monitor, and orchestrate multiple AI agents from a single dashboard.",
+    accent: "#8B7BF4",
+  },
+  {
+    slug: "ai-interface-patterns",
+    title: "AI Interface Patterns",
+    tags: ["AI UX", "Research", "Pattern Library"],
+    type: "Research catalog · 50+ patterns · 10 categories",
+    desc: "A comprehensive catalog of interface patterns for AI products — from initial CTAs to orchestration dashboards.",
+    accent: "#5EEAD4",
+  },
+  {
+    slug: "deftboard-design-system",
+    title: "Deftboard Design System",
+    tags: ["Design System", "UI Kit", "Figma"],
+    type: "Personal project · Atomic Design · 2022",
+    desc: "A complete Figma Design System built from first principles — 2,443+ likes on Behance.",
+    accent: "#3C76F1",
+  },
+  {
+    slug: "bloyal-design-system",
+    title: "bLoyal Design System",
+    tags: ["Design System", "B2B SaaS", "Design QA"],
+    type: "Client work · AI Loyalty Platform · In production",
+    desc: "Token architecture, component audits, and Design QA for an AI-powered CRM platform.",
+    accent: "#34D399",
+  },
+];
+
+/* ─── ProjectCard ────────────────────────────────────────────────────────── */
+
+function ProjectCard({
+  project,
+  featured = false,
+}: {
+  project: Project;
+  featured?: boolean;
+}) {
+  const { slug, title, tags, type, desc, accent } = project;
+  const rgb = hexToRgb(accent);
+
+  return (
+    <Link
+      href={`/work/${slug}`}
+      className="group flex flex-col border border-border bg-card hover:border-border-strong hover:-translate-y-0.5 transition-all duration-300"
+    >
+      {/* Preview — gradient placeholder, swap for Image later */}
+      <div
+        style={{
+          aspectRatio: featured ? "21 / 9" : "16 / 9",
+          background: `linear-gradient(135deg, rgba(${rgb}, 0.14) 0%, rgba(${rgb}, 0.04) 65%, transparent 100%)`,
+        }}
+      />
+
+      {/* Content */}
+      <div className="flex flex-col gap-4 p-6 lg:p-8 flex-1">
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1.5">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="font-mono text-[10px] px-2 py-0.5 border"
+              style={{
+                borderColor: `rgba(${rgb}, 0.35)`,
+                color: `rgba(${rgb}, 0.9)`,
+              }}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* Title */}
+        <h3
+          className={`font-serif text-fg leading-snug ${
+            featured ? "text-2xl lg:text-[1.75rem]" : "text-xl"
+          }`}
+        >
+          {title}
+        </h3>
+
+        {/* Type */}
+        <p className="font-mono text-[11px] text-fg-faint leading-relaxed">
+          {type}
+        </p>
+
+        {/* Description */}
+        <p className="font-sans text-sm text-fg-muted leading-relaxed line-clamp-2 flex-1">
+          {desc}
+        </p>
+
+        {/* CTA */}
+        <span className="font-mono text-xs text-violet group-hover:text-violet-dim transition-colors duration-200 mt-auto">
+          View case study →
+        </span>
+      </div>
+    </Link>
+  );
+}
+
 /* ─── Nav ────────────────────────────────────────────────────────────────── */
+
 function Navbar() {
   return (
     <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-base/90 backdrop-blur-sm">
@@ -98,6 +221,7 @@ function Navbar() {
 }
 
 /* ─── Hero ───────────────────────────────────────────────────────────────── */
+
 function Hero() {
   return (
     <section
@@ -105,7 +229,6 @@ function Hero() {
       className="min-h-screen flex flex-col justify-center px-6 lg:px-12 pt-14"
     >
       <div className="max-w-screen-xl mx-auto w-full py-24 lg:py-32">
-        {/* Label */}
         <div className="flex items-center gap-3 mb-10">
           <span className="w-6 h-px bg-violet shrink-0" aria-hidden />
           <span className="font-mono text-xs tracking-[0.2em] text-fg-muted uppercase">
@@ -113,20 +236,17 @@ function Hero() {
           </span>
         </div>
 
-        {/* Headline */}
         <h1 className="font-serif text-[clamp(2.75rem,7vw,5.25rem)] leading-[1.05] tracking-tight text-fg max-w-4xl mb-8">
           I design the systems and interfaces that make{" "}
           <em className="text-violet italic">AI products</em> usable
         </h1>
 
-        {/* Sub */}
         <p className="font-sans text-base sm:text-lg text-fg-muted leading-relaxed max-w-xl mb-12">
           Design Systems, AI&thinsp;/&thinsp;SaaS interfaces, and
           design-to-code workflows — for products where complexity needs to feel
           simple.
         </p>
 
-        {/* CTAs */}
         <div className="flex flex-wrap items-center gap-4">
           <a
             href="#contact"
@@ -147,12 +267,11 @@ function Hero() {
 }
 
 /* ─── What I Do ──────────────────────────────────────────────────────────── */
+
 function WhatIDo() {
   return (
     <section id="what-i-do" className="border-t border-border">
       <div className="max-w-screen-xl mx-auto px-6 lg:px-12">
-
-        {/* Section header */}
         <div className="flex items-center gap-5 h-16">
           <span className="font-mono text-xs text-fg-faint tabular-nums select-none">
             01
@@ -163,28 +282,59 @@ function WhatIDo() {
           </span>
         </div>
 
-        {/* Grid — 1-col on mobile, 3-col with vertical dividers on md+ */}
         <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border border-t border-border">
           {pillars.map(({ title, Icon, body }) => (
             <article
               key={title}
               className="group p-8 lg:p-12 hover:bg-raised transition-colors duration-300"
             >
-              {/* Icon */}
               <div className="mb-8 h-8 flex items-center">
                 <Icon />
               </div>
-
-              {/* Title */}
               <h3 className="font-serif text-xl text-fg mb-4 leading-snug">
                 {title}
               </h3>
-
-              {/* Body */}
               <p className="font-sans text-sm text-fg-muted leading-relaxed">
                 {body}
               </p>
             </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Proof of Work ──────────────────────────────────────────────────────── */
+
+function ProofOfWork() {
+  const [featured, ...rest] = projects;
+
+  return (
+    <section id="work" className="border-t border-border">
+      <div className="max-w-screen-xl mx-auto px-6 lg:px-12">
+
+        {/* Section header */}
+        <div className="flex items-center gap-5 h-16">
+          <span className="font-mono text-xs text-fg-faint tabular-nums select-none">
+            02
+          </span>
+          <span className="flex-1 h-px bg-border" aria-hidden />
+          <span className="font-mono text-xs tracking-[0.2em] text-fg-faint uppercase">
+            Proof of work
+          </span>
+        </div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-16 lg:pb-24">
+          {/* Featured — full width */}
+          <div className="md:col-span-2">
+            <ProjectCard project={featured} featured />
+          </div>
+
+          {/* Regular cards */}
+          {rest.map((project) => (
+            <ProjectCard key={project.slug} project={project} />
           ))}
         </div>
 
@@ -194,6 +344,7 @@ function WhatIDo() {
 }
 
 /* ─── Page ───────────────────────────────────────────────────────────────── */
+
 export default function HomePage() {
   return (
     <>
@@ -201,6 +352,7 @@ export default function HomePage() {
       <main>
         <Hero />
         <WhatIDo />
+        <ProofOfWork />
       </main>
     </>
   );
