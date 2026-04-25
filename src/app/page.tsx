@@ -1,14 +1,5 @@
 import Link from "next/link";
-
-/* ─── Utility ────────────────────────────────────────────────────────────── */
-
-function hexToRgb(hex: string): string {
-  return [
-    parseInt(hex.slice(1, 3), 16),
-    parseInt(hex.slice(3, 5), 16),
-    parseInt(hex.slice(5, 7), 16),
-  ].join(", ");
-}
+import { hexToRgb } from "@/lib/utils";
 
 /* ─── SectionHeader (reused across all sections) ─────────────────────────── */
 
@@ -104,7 +95,7 @@ type Project = {
 
 const projects: Project[] = [
   {
-    slug: "next-agent",
+    slug: "next-agent",   // → /work/next-agent
     title: "Next Agent",
     tags: ["AI SaaS", "Design System", "Next.js", "Product Design"],
     type: "AI Agent Orchestration Platform · Personal product · Design + Dev",
@@ -112,7 +103,7 @@ const projects: Project[] = [
     accent: "#8B7BF4",
   },
   {
-    slug: "ai-interface-patterns",
+    slug: "ai-patterns",
     title: "AI Interface Patterns",
     tags: ["AI UX", "Research", "Pattern Library"],
     type: "Research catalog · 50+ patterns · 10 categories",
@@ -120,7 +111,7 @@ const projects: Project[] = [
     accent: "#5EEAD4",
   },
   {
-    slug: "deftboard-design-system",
+    slug: "deftboard",
     title: "Deftboard Design System",
     tags: ["Design System", "UI Kit", "Figma"],
     type: "Personal project · Atomic Design · 2022",
@@ -128,7 +119,7 @@ const projects: Project[] = [
     accent: "#3C76F1",
   },
   {
-    slug: "bloyal-design-system",
+    slug: "bloyal",
     title: "bLoyal Design System",
     tags: ["Design System", "B2B SaaS", "Design QA"],
     type: "Client work · AI Loyalty Platform · In production",
