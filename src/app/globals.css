@@ -1,45 +1,40 @@
 @import "tailwindcss";
 
-/* ─── Design tokens ──────────────────────────────────────────────── */
+/* ─── Design tokens ──────────────────────────────────────────────────────── */
 @theme {
   /* Fonts */
-  --font-sans:  var(--font-dm-sans),  ui-sans-serif,  system-ui, sans-serif;
+  --font-sans:  var(--font-dm-sans),  ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
   --font-mono:  var(--font-ibm-plex-mono), ui-monospace, "Courier New", monospace;
 
-  /* Palette — raw values */
-  --color-bg:           #0D0D0D;
-  --color-surface:      #161616;
-  --color-surface-2:    #1E1E1E;
-  --color-border:       #2A2A2A;
-  --color-fg:           #F0EDE8;
-  --color-muted:        #888888;
-  --color-muted-2:      #555555;
+  /* Backgrounds
+     User tokens:  bg-primary → base | bg-secondary → raised | bg-card → card  */
+  --color-base:   #0A0A0B;
+  --color-raised: #111113;
+  --color-card:   #16161A;
 
-  /* Accent */
-  --color-violet:       #8B7BF4;
-  --color-violet-light: #A99DF7;
-  --color-violet-dark:  #6E5EE0;
+  /* Borders
+     User tokens: border-subtle → border | border-hover → border-strong */
+  --color-border:        #222228;
+  --color-border-strong: #333340;
+
+  /* Text
+     User tokens: text-primary → fg | text-secondary → fg-muted | text-tertiary → fg-faint */
+  --color-fg:       #EDEDEF;
+  --color-fg-muted: #8B8B95;
+  --color-fg-faint: #5C5C66;
+
+  /* Accent
+     User tokens: accent-violet → violet | accent-violet-dim → violet-dim */
+  --color-violet:     #8B7BF4;
+  --color-violet-dim: #6B5DD3;
 
   /* Semantic aliases */
-  --color-background:   var(--color-bg);
-  --color-foreground:   var(--color-fg);
-
-  /* Spacing extras */
-  --spacing-18: 4.5rem;
-  --spacing-22: 5.5rem;
-  --spacing-30: 7.5rem;
-
-  /* Border radius */
-  --radius-sm:  2px;
-  --radius-md:  4px;
-  --radius-lg:  8px;
-
-  /* Transitions */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --color-background: var(--color-base);
+  --color-foreground: var(--color-fg);
 }
 
-/* ─── Base ───────────────────────────────────────────────────────── */
+/* ─── Base reset ─────────────────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -47,45 +42,36 @@
 }
 
 html {
-  background-color: var(--color-bg);
-  color: var(--color-fg);
-  font-family: var(--font-sans);
-  font-feature-settings: "ss01", "ss02";
+  background-color: #0A0A0B; /* prevents flash before CSS vars load */
+  color: #EDEDEF;
   scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background-color: var(--color-bg);
+  background-color: var(--color-base);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
   min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "ss02";
 }
 
-/* ─── Typography helpers ─────────────────────────────────────────── */
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5 {
   font-family: var(--font-serif);
   font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
 }
 
-/* ─── Selection ──────────────────────────────────────────────────── */
+/* ─── Selection ──────────────────────────────────────────────────────────── */
 ::selection {
   background-color: var(--color-violet);
   color: #fff;
 }
 
-/* ─── Scrollbar ──────────────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-bg);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 2px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-violet);
-}
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 4px; }
+::-webkit-scrollbar-track  { background: var(--color-base); }
+::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-violet); }

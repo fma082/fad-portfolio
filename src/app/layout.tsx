@@ -25,19 +25,18 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio — Product Designer",
-  description: "Product design work: UX, systems, and research.",
+  title: "Facundo Almirón — Senior Product Designer",
+  description:
+    "Design Systems, AI/SaaS interfaces, and design-to-code workflows",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="es"
-      className={`${dmSans.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable} h-full`}
+      className={`${dmSans.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

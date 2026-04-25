@@ -1,65 +1,85 @@
-import Image from "next/image";
-
-export default function Home() {
+/* ─── Nav ────────────────────────────────────────────────────────────────── */
+function Navbar() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
+    <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-base/90 backdrop-blur-sm">
+      <div className="max-w-screen-xl mx-auto px-6 lg:px-12 flex items-center justify-between h-14">
+        <a href="/" className="font-mono text-sm font-medium text-fg">
+          fad<span className="text-violet">.design</span>
+        </a>
+
+        <nav className="flex items-center gap-8" aria-label="Main">
+          {(["Work", "About", "Contact"] as const).map((label) => (
             <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              key={label}
+              href={`#${label.toLowerCase()}`}
+              className="font-mono text-xs tracking-widest text-fg-muted uppercase hover:text-fg transition-colors duration-200"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              {label}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+/* ─── Hero ───────────────────────────────────────────────────────────────── */
+function Hero() {
+  return (
+    <section
+      id="hero"
+      className="min-h-screen flex flex-col justify-center px-6 lg:px-12 pt-14"
+    >
+      <div className="max-w-screen-xl mx-auto w-full py-24 lg:py-32">
+        {/* Label */}
+        <div className="flex items-center gap-3 mb-10">
+          <span className="w-6 h-px bg-violet shrink-0" aria-hidden />
+          <span className="font-mono text-xs tracking-[0.2em] text-fg-muted uppercase">
+            Senior Product Designer
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+
+        {/* Headline */}
+        <h1 className="font-serif text-[clamp(2.75rem,7vw,5.25rem)] leading-[1.05] tracking-tight text-fg max-w-4xl mb-8">
+          I design the systems and interfaces that make{" "}
+          <em className="text-violet italic">AI products</em> usable
+        </h1>
+
+        {/* Sub */}
+        <p className="font-sans text-base sm:text-lg text-fg-muted leading-relaxed max-w-xl mb-12">
+          Design Systems, AI&thinsp;/&thinsp;SaaS interfaces, and
+          design-to-code workflows — for products where complexity needs to feel
+          simple.
+        </p>
+
+        {/* CTAs */}
+        <div className="flex flex-wrap items-center gap-4">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contact"
+            className="inline-flex items-center px-5 py-2.5 bg-violet hover:bg-violet-dim text-white font-mono text-xs tracking-widest uppercase transition-colors duration-200"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+            Get in touch
           </a>
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#work"
+            className="inline-flex items-center px-5 py-2.5 border border-border hover:border-border-strong text-fg-muted hover:text-fg font-mono text-xs tracking-widest uppercase transition-colors duration-200"
           >
-            Documentation
+            View work
           </a>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Page ───────────────────────────────────────────────────────────────── */
+export default function HomePage() {
+  return (
+    <>
+      <Navbar />
+      <main>
+        <Hero />
       </main>
-    </div>
+    </>
   );
 }
