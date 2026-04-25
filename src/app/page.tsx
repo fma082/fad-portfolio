@@ -10,6 +10,22 @@ function hexToRgb(hex: string): string {
   ].join(", ");
 }
 
+/* ─── SectionHeader (reused across all sections) ─────────────────────────── */
+
+function SectionHeader({ num, label }: { num: string; label: string }) {
+  return (
+    <div className="flex items-center gap-5 h-16">
+      <span className="font-mono text-xs text-fg-faint tabular-nums select-none">
+        {num}
+      </span>
+      <span className="flex-1 h-px bg-border" aria-hidden />
+      <span className="font-mono text-xs tracking-[0.2em] text-fg-faint uppercase">
+        {label}
+      </span>
+    </div>
+  );
+}
+
 /* ─── Icons (geometric divs) ─────────────────────────────────────────────── */
 
 function DesignSystemsIcon() {
@@ -55,7 +71,7 @@ function DesignToCodeIcon() {
   );
 }
 
-/* ─── Pillars data ───────────────────────────────────────────────────────── */
+/* ─── Data ───────────────────────────────────────────────────────────────── */
 
 type Pillar = { title: string; Icon: () => React.JSX.Element; body: string };
 
@@ -77,15 +93,13 @@ const pillars: Pillar[] = [
   },
 ];
 
-/* ─── Projects data ──────────────────────────────────────────────────────── */
-
 type Project = {
   slug: string;
   title: string;
   tags: string[];
   type: string;
   desc: string;
-  accent: string; // hex
+  accent: string;
 };
 
 const projects: Project[] = [
@@ -123,6 +137,27 @@ const projects: Project[] = [
   },
 ];
 
+type ToolGroup = { label: string; tools: string[] };
+
+const toolGroups: ToolGroup[] = [
+  {
+    label: "Design",
+    tools: ["Figma", "Figma Variables", "Tokens Studio", "FigJam"],
+  },
+  {
+    label: "Process",
+    tools: ["Design QA", "Jira", "Confluence", "Agile/Scrum"],
+  },
+  {
+    label: "Code",
+    tools: ["Next.js", "Tailwind CSS", "shadcn/ui", "TypeScript"],
+  },
+  {
+    label: "AI",
+    tools: ["Claude", "Figma MCP", "Claude Code", "Cursor"],
+  },
+];
+
 /* ─── ProjectCard ────────────────────────────────────────────────────────── */
 
 function ProjectCard({
@@ -150,7 +185,6 @@ function ProjectCard({
 
       {/* Content */}
       <div className="flex flex-col gap-4 p-6 lg:p-8 flex-1">
-        {/* Tags */}
         <div className="flex flex-wrap gap-1.5">
           {tags.map((tag) => (
             <span
@@ -166,7 +200,6 @@ function ProjectCard({
           ))}
         </div>
 
-        {/* Title */}
         <h3
           className={`font-serif text-fg leading-snug ${
             featured ? "text-2xl lg:text-[1.75rem]" : "text-xl"
@@ -175,17 +208,14 @@ function ProjectCard({
           {title}
         </h3>
 
-        {/* Type */}
         <p className="font-mono text-[11px] text-fg-faint leading-relaxed">
           {type}
         </p>
 
-        {/* Description */}
         <p className="font-sans text-sm text-fg-muted leading-relaxed line-clamp-2 flex-1">
           {desc}
         </p>
 
-        {/* CTA */}
         <span className="font-mono text-xs text-violet group-hover:text-violet-dim transition-colors duration-200 mt-auto">
           View case study →
         </span>
@@ -272,15 +302,7 @@ function WhatIDo() {
   return (
     <section id="what-i-do" className="border-t border-border">
       <div className="max-w-screen-xl mx-auto px-6 lg:px-12">
-        <div className="flex items-center gap-5 h-16">
-          <span className="font-mono text-xs text-fg-faint tabular-nums select-none">
-            01
-          </span>
-          <span className="flex-1 h-px bg-border" aria-hidden />
-          <span className="font-mono text-xs tracking-[0.2em] text-fg-faint uppercase">
-            What I do
-          </span>
-        </div>
+        <SectionHeader num="01" label="What I do" />
 
         <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border border-t border-border">
           {pillars.map(({ title, Icon, body }) => (
@@ -313,33 +335,166 @@ function ProofOfWork() {
   return (
     <section id="work" className="border-t border-border">
       <div className="max-w-screen-xl mx-auto px-6 lg:px-12">
+        <SectionHeader num="02" label="Proof of work" />
 
-        {/* Section header */}
-        <div className="flex items-center gap-5 h-16">
-          <span className="font-mono text-xs text-fg-faint tabular-nums select-none">
-            02
-          </span>
-          <span className="flex-1 h-px bg-border" aria-hidden />
-          <span className="font-mono text-xs tracking-[0.2em] text-fg-faint uppercase">
-            Proof of work
-          </span>
-        </div>
-
-        {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-16 lg:pb-24">
-          {/* Featured — full width */}
           <div className="md:col-span-2">
             <ProjectCard project={featured} featured />
           </div>
-
-          {/* Regular cards */}
           {rest.map((project) => (
             <ProjectCard key={project.slug} project={project} />
           ))}
         </div>
-
       </div>
     </section>
+  );
+}
+
+/* ─── About ──────────────────────────────────────────────────────────────── */
+
+function About() {
+  return (
+    <section id="about" className="border-t border-border">
+      <div className="max-w-screen-xl mx-auto px-6 lg:px-12">
+        <SectionHeader num="03" label="About" />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 py-16 lg:py-20 border-t border-border">
+
+          {/* Left — bio text */}
+          <div className="flex flex-col gap-6">
+            <h2 className="font-serif text-[clamp(1.75rem,4vw,2.75rem)] text-fg leading-tight">
+              10+ years turning complex products into usable systems.
+            </h2>
+
+            <div className="flex flex-col gap-5">
+              <p className="font-sans text-base text-fg-muted leading-relaxed">
+                I started in web design and gradually moved deeper into product —
+                from pixels to systems, from screens to architectures. Today I
+                specialize in B2B SaaS products where the challenge is making
+                genuinely complex tools feel manageable.
+              </p>
+              <p className="font-sans text-base text-fg-muted leading-relaxed">
+                My approach is pragmatic. I care about consistency, edge cases,
+                accessibility, and whether what I design can actually be built
+                without friction. I document, I QA, I think in tokens and states
+                — not just happy paths.
+              </p>
+              <p className="font-sans text-base text-fg-muted leading-relaxed">
+                Currently exploring the intersection of design and AI: how we
+                build interfaces for products that think, respond, and sometimes
+                fail — and how Design Systems need to evolve to support those
+                patterns.
+              </p>
+            </div>
+
+            <p className="font-mono text-xs text-fg-faint tracking-wider">
+              Based in Argentina · Working with international teams
+            </p>
+          </div>
+
+          {/* Right — tools box */}
+          <div className="lg:sticky lg:top-20 h-fit">
+            <div className="bg-card border border-border rounded-xl p-6 lg:p-8 flex flex-col gap-6">
+
+              {/* Box header */}
+              <div className="pb-4 border-b border-border">
+                <span className="font-mono text-[11px] tracking-[0.18em] text-fg-faint uppercase">
+                  Tools &amp; Stack
+                </span>
+              </div>
+
+              {/* Tool groups */}
+              {toolGroups.map(({ label, tools }) => (
+                <div key={label} className="flex flex-col gap-2.5">
+                  <span className="font-mono text-[10px] tracking-widest text-fg-faint uppercase">
+                    {label}
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {tools.map((tool) => (
+                      <span
+                        key={tool}
+                        className="font-mono text-[11px] px-2.5 py-1 bg-raised border border-border rounded text-fg-muted"
+                      >
+                        {tool}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Contact ────────────────────────────────────────────────────────────── */
+
+function Contact() {
+  return (
+    <section id="contact" className="border-t border-border">
+      <div className="max-w-screen-xl mx-auto px-6 lg:px-12">
+        <SectionHeader num="04" label="Contact" />
+
+        <div className="border-t border-border py-20 lg:py-28 flex flex-col items-center text-center gap-8 max-w-2xl mx-auto">
+          <h2 className="font-serif text-[clamp(2rem,5vw,3.5rem)] text-fg leading-tight">
+            Let&apos;s build something{" "}
+            <em className="text-violet italic">useful</em>.
+          </h2>
+
+          <p className="font-sans text-base text-fg-muted leading-relaxed max-w-lg">
+            Available for freelance contracts, consulting, and product design
+            roles — especially if you&apos;re building something with AI.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-3">
+            <a
+              href="mailto:hello@fad.design"
+              className="inline-flex items-center px-5 py-2.5 bg-violet hover:bg-violet-dim text-white font-mono text-xs tracking-widest uppercase transition-colors duration-200"
+            >
+              Email me
+            </a>
+            <a
+              href="#"
+              className="inline-flex items-center px-5 py-2.5 border border-border hover:border-border-strong text-fg-muted hover:text-fg font-mono text-xs tracking-widest uppercase transition-colors duration-200"
+            >
+              LinkedIn
+            </a>
+            <a
+              href="#"
+              className="inline-flex items-center px-5 py-2.5 border border-border hover:border-border-strong text-fg-muted hover:text-fg font-mono text-xs tracking-widest uppercase transition-colors duration-200"
+            >
+              Upwork
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+
+function Footer() {
+  return (
+    <footer className="border-t border-border">
+      <div className="max-w-screen-xl mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 py-6">
+        <span className="font-mono text-xs text-fg-faint">
+          © 2026 Facundo Almirón
+        </span>
+        <span className="font-mono text-xs text-fg-faint">
+          Built with{" "}
+          <span className="text-violet">Next.js</span>
+          {" "}+{" "}
+          <span className="text-violet">Tailwind</span>
+          {" · "}Deployed on{" "}
+          <span className="text-violet">Vercel</span>
+        </span>
+      </div>
+    </footer>
   );
 }
 
@@ -353,7 +508,10 @@ export default function HomePage() {
         <Hero />
         <WhatIDo />
         <ProofOfWork />
+        <About />
+        <Contact />
       </main>
+      <Footer />
     </>
   );
 }
