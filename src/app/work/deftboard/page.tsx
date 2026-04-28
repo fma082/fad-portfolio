@@ -10,7 +10,8 @@ import { hexToRgb } from "@/lib/utils";
 /* ─── Constants ──────────────────────────────────────────────────────────── */
 
 const ACCENT = "#3C76F1";
-const IMG = (name: string) => `/images/projects/deftboard/${name}`;
+const IMG = (name: string) =>
+  `/images/projects/deftboard/${encodeURIComponent(name)}`;
 
 export const metadata: Metadata = {
   title: "DeftBoard Design System — Facundo Almirón",
@@ -243,7 +244,7 @@ export default function DeftboardPage() {
         <div className="flex flex-col gap-4 pb-16 lg:pb-20">
           <ScrollReveal delay={0.05}>
             <ImageFrame
-              src={IMG("02_-_Colors_Styles.png")}
+              src={IMG("02 - Colors Styles.png")}
               alt="Color system — primitive and semantic tokens"
               caption="Color system"
               tag="Atom"
@@ -252,7 +253,7 @@ export default function DeftboardPage() {
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <ImageFrame
-              src={IMG("03_-_Typography_Desktop.png")}
+              src={IMG("03 - Typography Desktop.png")}
               alt="Typography scale for desktop"
               caption="Typography scale"
               tag="Atom"
@@ -262,14 +263,14 @@ export default function DeftboardPage() {
           <ScrollReveal delay={0.15}>
             <ImageGrid
               left={{
-                src: IMG("04_-_Spacing___screen_grid.png"),
+                src: IMG("04 - Spacing & screen grid.png"),
                 alt: "Spacing system and screen grid",
                 caption: "Spacing & grid",
                 tag: "Atom",
                 accent: ACCENT,
               }}
               right={{
-                src: IMG("05_-_Icons.png"),
+                src: IMG("05 - Icons.png"),
                 alt: "Icon library",
                 caption: "Icon library",
                 tag: "Atom",
@@ -313,7 +314,7 @@ export default function DeftboardPage() {
         <div className="flex flex-col gap-4 pb-16 lg:pb-20">
           <ScrollReveal delay={0.05}>
             <ImageFrame
-              src={IMG("06_-_Buttons.png")}
+              src={IMG("06 - Buttons.png")}
               alt="Button component — all sizes and states"
               caption="Button variants"
               tag="Molecule"
@@ -322,7 +323,7 @@ export default function DeftboardPage() {
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <ImageFrame
-              src={IMG("07_-_Text_Input.png")}
+              src={IMG("07 - Text Input.png")}
               alt="Text input component — variants and states"
               caption="Text inputs"
               tag="Molecule"
@@ -332,14 +333,14 @@ export default function DeftboardPage() {
           <ScrollReveal delay={0.15}>
             <ImageGrid
               left={{
-                src: IMG("08_-_Badges.png"),
+                src: IMG("08 - Badges.png"),
                 alt: "Badge components",
                 caption: "Badges",
                 tag: "Molecule",
                 accent: ACCENT,
               }}
               right={{
-                src: IMG("09_-_Navigation.png"),
+                src: IMG("09 - Navigation.png"),
                 alt: "Navigation components",
                 caption: "Navigation",
                 tag: "Organism",
@@ -350,14 +351,14 @@ export default function DeftboardPage() {
           <ScrollReveal delay={0.2}>
             <ImageGrid
               left={{
-                src: IMG("10_-_Tables.png"),
+                src: IMG("10 - Tables.png"),
                 alt: "Table component variants",
                 caption: "Tables",
                 tag: "Organism",
                 accent: ACCENT,
               }}
               right={{
-                src: IMG("12_-_Graphics.png"),
+                src: IMG("12 - Graphics.png"),
                 alt: "Chart and graphic components",
                 caption: "Graphics",
                 tag: "Organism",
@@ -388,7 +389,7 @@ export default function DeftboardPage() {
         <div className="flex flex-col gap-4 pb-16 lg:pb-20">
           <ScrollReveal delay={0.05}>
             <ImageFrame
-              src={IMG("13_-_Variants_02.png")}
+              src={IMG("13 - Variants_02.png")}
               alt="Figma component variants structure"
               caption="Component variant architecture"
               tag="System"
@@ -397,7 +398,7 @@ export default function DeftboardPage() {
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <ImageFrame
-              src={IMG("14_Variantes_02.png")}
+              src={IMG("14 Variantes_02.png")}
               alt="Figma component properties panel"
               caption="Property architecture"
               tag="System"
@@ -427,7 +428,7 @@ export default function DeftboardPage() {
         <ScrollReveal delay={0.1}>
           <div className="pb-16 lg:pb-20">
             <ImageFrame
-              src={IMG("15_-_Screen.png")}
+              src={IMG("15 - Screen.png")}
               alt="Screen templates built with the design system"
               caption="Screen templates"
               tag="Templates"
