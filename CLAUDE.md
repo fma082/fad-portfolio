@@ -27,14 +27,20 @@ Icons are hand-drawn inline SVG components — do NOT install an icon library.
 
 ## Token reference (source of truth is globals.css, this is a map)
 
-Backgrounds bg-base #0A0A0B · bg-raised #111113 · bg-card #16161A
+Backgrounds bg-canvas #0A0A0B · bg-raised #111113 · bg-card #16161A · bg-card-hover #1C1C21
 Borders border-border #222228 · border-border-strong #333340
 Text text-fg #EDEDEF · text-fg-muted #8B8B95 · text-fg-faint #5C5C66
 Accent violet #8B7BF4 · violet-dim #6B5DD3
 
 Per-project accents live as tokens too — never as inline hex:
 teal #5EEAD4 · blue #3C76F1 · green #34D399 · amber #FBBF24 · red #F87171
-card-hover #1C1C21
+
+A case study never names its accent directly. It sets `data-accent="blue"` on its
+root node; `globals.css` maps that to `--accent`, and descendants read it as
+`text-(--accent)` or `border-(--accent)/40`. No `accent` prop, no hex.
+
+Never name a color token after a font-size step (`xs`, `sm`, `base`, `lg`, `xl`…) —
+every `--color-*` also generates a `text-*` utility that would shadow it.
 
 ## Type
 

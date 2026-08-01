@@ -5,11 +5,9 @@ import { ImageFrame } from "@/components/case-study/ImageFrame";
 import { ImageGrid } from "@/components/case-study/ImageGrid";
 import { SectionDivider } from "@/components/case-study/SectionDivider";
 import { ScrollReveal } from "@/components/case-study/ScrollReveal";
-import { hexToRgb } from "@/lib/utils";
 
 /* ─── Constants ──────────────────────────────────────────────────────────── */
 
-const ACCENT = "#3C76F1";
 const IMG = (name: string) =>
   `/images/projects/deftboard/${encodeURIComponent(name)}`;
 
@@ -43,60 +41,28 @@ function CaseSection({
 /* ─── Atomic Design icons ────────────────────────────────────────────────── */
 
 function AtomIcon() {
-  const rgb = hexToRgb(ACCENT);
-  return (
-    <div
-      className="w-7 h-7 rounded-full border-2"
-      style={{ borderColor: `rgba(${rgb}, 0.6)` }}
-    />
-  );
+  return <div className="w-7 h-7 rounded-full border-2 border-(--accent)/60" />;
 }
 
 function MoleculeIcon() {
-  const rgb = hexToRgb(ACCENT);
   return (
     <div className="flex items-center gap-1.5">
-      <span
-        className="w-3 h-3 rounded-full"
-        style={{ background: `rgba(${rgb}, 0.5)` }}
-      />
-      <span
-        className="w-5 h-px"
-        style={{ background: `rgba(${rgb}, 0.3)` }}
-      />
-      <span
-        className="w-4 h-4 rounded-full"
-        style={{ background: `rgba(${rgb}, 0.35)` }}
-      />
-      <span
-        className="w-5 h-px"
-        style={{ background: `rgba(${rgb}, 0.3)` }}
-      />
-      <span
-        className="w-3 h-3 rounded-full"
-        style={{ background: `rgba(${rgb}, 0.2)` }}
-      />
+      <span className="w-3 h-3 rounded-full bg-(--accent)/50" />
+      <span className="w-5 h-px bg-(--accent)/30" />
+      <span className="w-4 h-4 rounded-full bg-(--accent)/35" />
+      <span className="w-5 h-px bg-(--accent)/30" />
+      <span className="w-3 h-3 rounded-full bg-(--accent)/20" />
     </div>
   );
 }
 
 function OrganismIcon() {
-  const rgb = hexToRgb(ACCENT);
   return (
     <div className="flex flex-col gap-1 w-9">
-      <span
-        className="h-1.5 w-full rounded-sm"
-        style={{ background: `rgba(${rgb}, 0.5)` }}
-      />
+      <span className="h-1.5 w-full rounded-sm bg-(--accent)/50" />
       <div className="flex gap-1">
-        <span
-          className="h-5 w-3 rounded-sm"
-          style={{ background: `rgba(${rgb}, 0.25)` }}
-        />
-        <span
-          className="h-5 flex-1 rounded-sm"
-          style={{ background: `rgba(${rgb}, 0.15)` }}
-        />
+        <span className="h-5 w-3 rounded-sm bg-(--accent)/25" />
+        <span className="h-5 flex-1 rounded-sm bg-(--accent)/15" />
       </div>
     </div>
   );
@@ -137,19 +103,16 @@ const componentStats = [
 /* ─── Page ───────────────────────────────────────────────────────────────── */
 
 export default function DeftboardPage() {
-  const rgb = hexToRgb(ACCENT);
-
   return (
-    <main>
+    /* data-accent feeds --accent to every descendant through the cascade */
+    <main data-accent="blue">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <CaseHero
         tags={["Design System", "UI Kit", "Figma", "Atomic Design"]}
         title={
           <>
             DeftBoard: a complete{" "}
-            <em style={{ color: ACCENT, fontStyle: "italic" }}>
-              Design System
-            </em>{" "}
+            <em className="italic text-(--accent)">Design System</em>{" "}
             built from first principles
           </>
         }
@@ -166,7 +129,6 @@ export default function DeftboardPage() {
           { value: "100+",   label: "Variants documented" },
           { value: "4",      label: "Screen templates" },
         ]}
-        accent={ACCENT}
       />
 
       {/* ── 01 The Brief ─────────────────────────────────────────────────── */}
@@ -248,7 +210,6 @@ export default function DeftboardPage() {
               alt="Color system — primitive and semantic tokens"
               caption="Color system"
               tag="Atom"
-              accent={ACCENT}
             />
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
@@ -257,7 +218,6 @@ export default function DeftboardPage() {
               alt="Typography scale for desktop"
               caption="Typography scale"
               tag="Atom"
-              accent={ACCENT}
             />
           </ScrollReveal>
           <ScrollReveal delay={0.15}>
@@ -267,14 +227,12 @@ export default function DeftboardPage() {
                 alt: "Spacing system and screen grid",
                 caption: "Spacing & grid",
                 tag: "Atom",
-                accent: ACCENT,
               }}
               right={{
                 src: IMG("05 - Icons.png"),
                 alt: "Icon library",
                 caption: "Icon library",
                 tag: "Atom",
-                accent: ACCENT,
               }}
             />
           </ScrollReveal>
@@ -318,7 +276,6 @@ export default function DeftboardPage() {
               alt="Button component — all sizes and states"
               caption="Button variants"
               tag="Molecule"
-              accent={ACCENT}
             />
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
@@ -327,7 +284,6 @@ export default function DeftboardPage() {
               alt="Text input component — variants and states"
               caption="Text inputs"
               tag="Molecule"
-              accent={ACCENT}
             />
           </ScrollReveal>
           <ScrollReveal delay={0.15}>
@@ -337,14 +293,12 @@ export default function DeftboardPage() {
                 alt: "Badge components",
                 caption: "Badges",
                 tag: "Molecule",
-                accent: ACCENT,
               }}
               right={{
                 src: IMG("09 - Navigation.png"),
                 alt: "Navigation components",
                 caption: "Navigation",
                 tag: "Organism",
-                accent: ACCENT,
               }}
             />
           </ScrollReveal>
@@ -355,14 +309,12 @@ export default function DeftboardPage() {
                 alt: "Table component variants",
                 caption: "Tables",
                 tag: "Organism",
-                accent: ACCENT,
               }}
               right={{
                 src: IMG("12 - Graphics.png"),
                 alt: "Chart and graphic components",
                 caption: "Graphics",
                 tag: "Organism",
-                accent: ACCENT,
               }}
             />
           </ScrollReveal>
@@ -393,7 +345,6 @@ export default function DeftboardPage() {
               alt="Figma component variants structure"
               caption="Component variant architecture"
               tag="System"
-              accent={ACCENT}
             />
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
@@ -402,7 +353,6 @@ export default function DeftboardPage() {
               alt="Figma component properties panel"
               caption="Property architecture"
               tag="System"
-              accent={ACCENT}
             />
           </ScrollReveal>
         </div>
@@ -432,7 +382,6 @@ export default function DeftboardPage() {
               alt="Screen templates built with the design system"
               caption="Screen templates"
               tag="Templates"
-              accent={ACCENT}
             />
           </div>
         </ScrollReveal>
@@ -450,16 +399,10 @@ export default function DeftboardPage() {
 
         {/* Behance callout */}
         <ScrollReveal delay={0.1}>
-          <div
-            className="rounded-xl border p-10 lg:p-16 text-center mb-12"
-            style={{
-              borderColor: `rgba(${rgb}, 0.25)`,
-              background: `rgba(${rgb}, 0.05)`,
-            }}
-          >
+          <div className="rounded-xl border border-(--accent)/25 bg-(--accent)/5 p-10 lg:p-16 text-center mb-12">
             <p
-              className="font-mono font-medium leading-none mb-3"
-              style={{ fontSize: "clamp(4rem, 10vw, 7rem)", color: ACCENT }}
+              className="font-mono font-medium leading-none mb-3 text-(--accent)"
+              style={{ fontSize: "clamp(4rem, 10vw, 7rem)" }}
             >
               2,443+
             </p>

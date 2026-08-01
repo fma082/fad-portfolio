@@ -2,7 +2,7 @@ import Link from "next/link";
 
 function CaseNav() {
   return (
-    <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-base/90 backdrop-blur-sm">
+    <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-canvas/90 backdrop-blur-sm">
       <div className="max-w-screen-xl mx-auto px-6 lg:px-12 flex items-center justify-between h-14">
         <Link href="/" className="font-mono text-sm font-medium text-fg">
           fad<span className="text-violet">.design</span>

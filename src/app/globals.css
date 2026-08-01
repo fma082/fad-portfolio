@@ -8,10 +8,13 @@
   --font-mono:  var(--font-ibm-plex-mono), ui-monospace, "Courier New", monospace;
 
   /* Backgrounds
-     User tokens:  bg-primary → base | bg-secondary → raised | bg-card → card  */
-  --color-base:   #0A0A0B;
-  --color-raised: #111113;
-  --color-card:   #16161A;
+     User tokens:  bg-primary → canvas | bg-secondary → raised | bg-card → card
+     `canvas`, not `base`: a --color-base token would generate a `text-base`
+     color utility that shadows Tailwind's own `text-base` font-size. */
+  --color-canvas:     #0A0A0B;
+  --color-raised:     #111113;
+  --color-card:       #16161A;
+  --color-card-hover: #1C1C21;
 
   /* Borders
      User tokens: border-subtle → border | border-hover → border-strong */
@@ -29,9 +32,40 @@
   --color-violet:     #8B7BF4;
   --color-violet-dim: #6B5DD3;
 
+  /* Per-project accents — one per case study, referenced through --accent */
+  --color-teal:  #5EEAD4;
+  --color-blue:  #3C76F1;
+  --color-green: #34D399;
+  --color-amber: #FBBF24;
+  --color-red:   #F87171;
+
   /* Semantic aliases */
-  --color-background: var(--color-base);
+  --color-background: var(--color-canvas);
   --color-foreground: var(--color-fg);
+}
+
+/* ─── Per-project accent ─────────────────────────────────────────────────── */
+/* A case study sets `data-accent` on its root node; every descendant reads
+   `--accent` through the cascade. Keeping the mapping here (instead of building
+   `var(--color-*)` strings in TS) is also what keeps these tokens in the build:
+   Tailwind v4 drops any @theme variable it cannot see referenced. */
+@layer base {
+  [data-accent="violet"] { --accent: var(--color-violet); }
+  [data-accent="teal"]   { --accent: var(--color-teal); }
+  [data-accent="blue"]   { --accent: var(--color-blue); }
+  [data-accent="green"]  { --accent: var(--color-green); }
+  [data-accent="amber"]  { --accent: var(--color-amber); }
+  [data-accent="red"]    { --accent: var(--color-red); }
+}
+
+/* Project card preview wash — multi-stop gradient, not expressible as a utility */
+@utility accent-wash {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 14%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 4%, transparent) 65%,
+    transparent 100%
+  );
 }
 
 /* ─── Base reset ─────────────────────────────────────────────────────────── */
@@ -48,7 +82,7 @@ html {
 }
 
 body {
-  background-color: var(--color-base);
+  background-color: var(--color-canvas);
   color: var(--color-fg);
   font-family: var(--font-sans);
   min-height: 100dvh;
@@ -72,6 +106,6 @@ h1, h2, h3, h4, h5 {
 
 /* ─── Scrollbar ──────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar        { width: 4px; }
-::-webkit-scrollbar-track  { background: var(--color-base); }
+::-webkit-scrollbar-track  { background: var(--color-canvas); }
 ::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-violet); }

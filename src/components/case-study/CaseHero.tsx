@@ -15,7 +15,6 @@ export type CaseHeroProps = {
   subtitle: string;
   meta: Meta;
   stats: Stat[];
-  accent: string;
 };
 
 export function CaseHero({
@@ -24,7 +23,6 @@ export function CaseHero({
   subtitle,
   meta,
   stats,
-  accent,
 }: CaseHeroProps) {
   return (
     <section className="border-b border-border">
@@ -68,10 +66,7 @@ export function CaseHero({
         <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-border border-t border-border -mx-6 lg:-mx-12 px-6 lg:px-12">
           {stats.map(({ value, label }) => (
             <div key={label} className="py-6 px-3 first:pl-0 last:pr-0">
-              <p
-                className="font-mono text-2xl lg:text-3xl font-medium leading-none mb-1.5"
-                style={{ color: accent }}
-              >
+              <p className="font-mono text-2xl lg:text-3xl font-medium leading-none mb-1.5 text-(--accent)">
                 {value}
               </p>
               <p className="font-mono text-[10px] text-fg-faint uppercase tracking-wider">

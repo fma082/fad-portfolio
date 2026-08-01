@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { hexToRgb } from "@/lib/utils";
+import type { AccentToken } from "@/types/accent";
 
 /* ─── SectionHeader (reused across all sections) ─────────────────────────── */
 
@@ -90,7 +90,7 @@ type Project = {
   tags: string[];
   type: string;
   desc: string;
-  accent: string;
+  accent: AccentToken;
 };
 
 const projects: Project[] = [
@@ -100,7 +100,7 @@ const projects: Project[] = [
     tags: ["AI SaaS", "Design System", "Next.js", "Product Design"],
     type: "AI Agent Orchestration Platform · Personal product · Design + Dev",
     desc: "A platform where teams deploy, monitor, and orchestrate multiple AI agents from a single dashboard.",
-    accent: "#8B7BF4",
+    accent: "violet",
   },
   {
     slug: "ai-patterns",
@@ -108,7 +108,7 @@ const projects: Project[] = [
     tags: ["AI UX", "Research", "Pattern Library"],
     type: "Research catalog · 50+ patterns · 10 categories",
     desc: "A comprehensive catalog of interface patterns for AI products — from initial CTAs to orchestration dashboards.",
-    accent: "#5EEAD4",
+    accent: "teal",
   },
   {
     slug: "deftboard",
@@ -116,7 +116,7 @@ const projects: Project[] = [
     tags: ["Design System", "UI Kit", "Figma"],
     type: "Personal project · Atomic Design · 2022",
     desc: "A complete Figma Design System built from first principles — 2,443+ likes on Behance.",
-    accent: "#3C76F1",
+    accent: "blue",
   },
   {
     slug: "bloyal",
@@ -124,7 +124,7 @@ const projects: Project[] = [
     tags: ["Design System", "B2B SaaS", "Design QA"],
     type: "Client work · AI Loyalty Platform · In production",
     desc: "Token architecture, component audits, and Design QA for an AI-powered CRM platform.",
-    accent: "#34D399",
+    accent: "green",
   },
 ];
 
@@ -159,19 +159,16 @@ function ProjectCard({
   featured?: boolean;
 }) {
   const { slug, title, tags, type, desc, accent } = project;
-  const rgb = hexToRgb(accent);
 
   return (
     <Link
       href={`/work/${slug}`}
+      data-accent={accent}
       className="group flex flex-col border border-border bg-card hover:border-border-strong hover:-translate-y-0.5 transition-all duration-300"
     >
       {/* Preview — gradient placeholder, swap for Image later */}
       <div
-        style={{
-          aspectRatio: featured ? "21 / 9" : "16 / 9",
-          background: `linear-gradient(135deg, rgba(${rgb}, 0.14) 0%, rgba(${rgb}, 0.04) 65%, transparent 100%)`,
-        }}
+        className={`accent-wash ${featured ? "aspect-21/9" : "aspect-video"}`}
       />
 
       {/* Content */}
@@ -180,11 +177,7 @@ function ProjectCard({
           {tags.map((tag) => (
             <span
               key={tag}
-              className="font-mono text-[10px] px-2 py-0.5 border"
-              style={{
-                borderColor: `rgba(${rgb}, 0.35)`,
-                color: `rgba(${rgb}, 0.9)`,
-              }}
+              className="font-mono text-[10px] px-2 py-0.5 border border-(--accent)/35 text-(--accent)/90"
             >
               {tag}
             </span>
@@ -219,11 +212,11 @@ function ProjectCard({
 
 function Navbar() {
   return (
-    <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-base/90 backdrop-blur-sm">
+    <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-canvas/90 backdrop-blur-sm">
       <div className="max-w-screen-xl mx-auto px-6 lg:px-12 flex items-center justify-between h-14">
-        <a href="/" className="font-mono text-sm font-medium text-fg">
+        <Link href="/" className="font-mono text-sm font-medium text-fg">
           fad<span className="text-violet">.design</span>
-        </a>
+        </Link>
 
         <nav className="flex items-center gap-8" aria-label="Main">
           {(["Work", "About", "Contact"] as const).map((label) => (

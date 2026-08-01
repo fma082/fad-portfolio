@@ -1,12 +1,10 @@
 import Image from "next/image";
-import { hexToRgb } from "@/lib/utils";
 
 export type ImageFrameProps = {
   src: string;
   alt: string;
   caption?: string;
   tag?: string;
-  accent?: string;
   sizes?: string;
 };
 
@@ -15,11 +13,8 @@ export function ImageFrame({
   alt,
   caption,
   tag,
-  accent = "#8B7BF4",
   sizes = "(max-width: 768px) 100vw, 1200px",
 }: ImageFrameProps) {
-  const rgb = hexToRgb(accent);
-
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
       {/* Image container — object-contain shows full screenshot without crop */}
@@ -40,13 +35,7 @@ export function ImageFrame({
             {caption ?? ""}
           </span>
           {tag && (
-            <span
-              className="font-mono text-[10px] px-2.5 py-0.5 border shrink-0"
-              style={{
-                borderColor: `rgba(${rgb}, 0.4)`,
-                color: `rgba(${rgb}, 0.9)`,
-              }}
-            >
+            <span className="font-mono text-[10px] px-2.5 py-0.5 border border-(--accent)/40 text-(--accent)/90 shrink-0">
               {tag}
             </span>
           )}
