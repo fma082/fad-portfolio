@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 type Stat = { value: string; label: string };
 
 type Meta = {
@@ -11,11 +9,27 @@ type Meta = {
 
 export type CaseHeroProps = {
   tags: string[];
-  title: ReactNode;
+  /* Fragments wrapped in *asterisks* render in the accent colour. */
+  title: string;
   subtitle: string;
   meta: Meta;
   stats: Stat[];
+  /* Slot under the meta row, used for the external links. */
+  children?: React.ReactNode;
 };
+
+/* Odd indices are the emphasised fragments once split on the markers. */
+function renderTitle(title: string) {
+  return title.split("*").map((fragment, i) =>
+    i % 2 === 1 ? (
+      <em key={i} className="italic text-(--accent)">
+        {fragment}
+      </em>
+    ) : (
+      fragment
+    ),
+  );
+}
 
 export function CaseHero({
   tags,
@@ -23,6 +37,7 @@ export function CaseHero({
   subtitle,
   meta,
   stats,
+  children,
 }: CaseHeroProps) {
   return (
     <section className="border-b border-border">
@@ -42,7 +57,7 @@ export function CaseHero({
 
         {/* Title */}
         <h1 className="font-serif text-[clamp(2rem,5.5vw,4.25rem)] leading-[1.05] tracking-tight text-fg max-w-4xl mb-6">
-          {title}
+          {renderTitle(title)}
         </h1>
 
         {/* Subtitle */}
@@ -61,6 +76,8 @@ export function CaseHero({
             </div>
           ))}
         </div>
+
+        {children}
 
         {/* Stats bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-border border-t border-border -mx-6 lg:-mx-12 px-6 lg:px-12">
