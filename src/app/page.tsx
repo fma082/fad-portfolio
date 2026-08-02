@@ -434,7 +434,9 @@ function Contact() {
             roles — especially if you&apos;re building something with AI.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-4">
+            {/* TODO: confirm this address — hello@fad.design was never verified
+                as a real inbox and appears nowhere else in the project */}
             <a
               href="mailto:hello@fad.design"
               className="inline-flex items-center px-5 py-2.5 bg-violet hover:bg-violet-dim text-white font-mono text-xs tracking-widest uppercase transition-colors duration-200"
@@ -442,16 +444,12 @@ function Contact() {
               Email me
             </a>
             <a
-              href="#"
+              href="https://www.linkedin.com/in/fma82/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center px-5 py-2.5 border border-border hover:border-border-strong text-fg-muted hover:text-fg font-mono text-xs tracking-widest uppercase transition-colors duration-200"
             >
               LinkedIn
-            </a>
-            <a
-              href="#"
-              className="inline-flex items-center px-5 py-2.5 border border-border hover:border-border-strong text-fg-muted hover:text-fg font-mono text-xs tracking-widest uppercase transition-colors duration-200"
-            >
-              Upwork
             </a>
           </div>
         </div>
