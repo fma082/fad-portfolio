@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { AccentToken } from "@/types/accent";
 
 /* ─── SectionHeader (reused across all sections) ─────────────────────────── */
@@ -91,6 +92,8 @@ type Project = {
   type: string;
   desc: string;
   accent: AccentToken;
+  /* Preview image. Without one the card falls back to the accent gradient. */
+  thumb?: string;
 };
 
 const projects: Project[] = [
@@ -117,6 +120,7 @@ const projects: Project[] = [
     type: "Personal project · Atomic Design · 2021",
     desc: "A Figma design system for dashboard products — 49 component sets, 817 variants, used 1,600 times on Figma Community.",
     accent: "blue",
+    thumb: "/images/projects/design-system/cover.png",
   },
   {
     slug: "bloyal",
@@ -158,7 +162,7 @@ function ProjectCard({
   project: Project;
   featured?: boolean;
 }) {
-  const { slug, title, tags, type, desc, accent } = project;
+  const { slug, title, tags, type, desc, accent, thumb } = project;
 
   return (
     <Link
@@ -166,10 +170,30 @@ function ProjectCard({
       data-accent={accent}
       className="group flex flex-col border border-border bg-card hover:border-border-strong hover:-translate-y-0.5 transition-all duration-300"
     >
-      {/* Preview — gradient placeholder, swap for Image later */}
+      {/* Preview — cover image when the project has one, accent gradient when
+          it does not. `alt` is empty on purpose: the card title right below
+          already names the link, so a description here would be read twice. */}
       <div
-        className={`accent-wash ${featured ? "aspect-21/9" : "aspect-video"}`}
-      />
+        className={`relative overflow-hidden border-b border-border ${
+          featured ? "aspect-21/9" : "aspect-video"
+        }`}
+      >
+        {thumb ? (
+          <Image
+            src={thumb}
+            alt=""
+            fill
+            className="object-cover"
+            sizes={
+              featured
+                ? "(max-width: 1024px) 100vw, 1200px"
+                : "(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 620px"
+            }
+          />
+        ) : (
+          <div className="accent-wash absolute inset-0" />
+        )}
+      </div>
 
       {/* Content */}
       <div className="flex flex-col gap-4 p-6 lg:p-8 flex-1">

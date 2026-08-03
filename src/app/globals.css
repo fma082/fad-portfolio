@@ -69,33 +69,40 @@
 }
 
 /* ─── Base reset ─────────────────────────────────────────────────────────── */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* These have to stay inside `@layer base`. Unlayered declarations outrank every
+   layered one no matter the specificity, so an element selector sitting outside
+   a layer beats Tailwind's utilities — which live in `@layer utilities`. When
+   this block was unlayered, `h1…h5` silently overrode `font-mono`,
+   `tracking-*` and `leading-*` on any heading that asked for them. */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-html {
-  background-color: #0A0A0B; /* prevents flash before CSS vars load */
-  color: #EDEDEF;
-  scroll-behavior: smooth;
-}
+  html {
+    background-color: #0A0A0B; /* prevents flash before CSS vars load */
+    color: #EDEDEF;
+    scroll-behavior: smooth;
+  }
 
-body {
-  background-color: var(--color-canvas);
-  color: var(--color-fg);
-  font-family: var(--font-sans);
-  min-height: 100dvh;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: "ss01", "ss02";
-}
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "ss01", "ss02";
+  }
 
-h1, h2, h3, h4, h5 {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: -0.025em;
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+  }
 }
 
 /* ─── Selection ──────────────────────────────────────────────────────────── */
