@@ -46,7 +46,10 @@ export function DecisionBox({ block }: { block: DecisionBlock }) {
 export function TradeoffBox({ block }: { block: TradeoffBlock }) {
   return (
     <div className="max-w-3xl border border-amber/25 bg-amber/5 rounded-lg px-6 py-5">
-      <h3 className="font-mono text-[10px] tracking-[0.2em] uppercase text-amber mb-3">
+      {/* Same label tier as SectionDivider: 12px is the top of the 10–12px mono
+          range, and at 10px an uppercase tracked title stops being readable.
+          Colour is unchanged — amber on the amber/5 field is 11.1:1. */}
+      <h3 className="font-mono text-xs tracking-[0.2em] uppercase text-amber mb-3">
         {block.title}
       </h3>
       <p className="font-sans text-base text-fg-muted leading-relaxed">

@@ -220,12 +220,12 @@ export const designSystem: CaseStudy = {
     {
       type: "tradeoff",
       title: "Typography documents two numbers and explains neither",
-      body: "Typography documents two numbers and explains neither. Each step shows something like “24px 32px”. In June 2024, three years after publishing, someone asked me what the second number meant. It's line height — but nothing in the file says so. Worse: 46 of the 73 text styles carry a bound line height of 20px, from 12px captions to 48px headings. The sheet documents one thing; the styles apply another.",
+      body: "Each step shows something like “24px 32px”. In June 2024, three years after publishing, someone asked me what the second number meant. It's line height — but nothing in the file says so. Worse: 46 of the 73 text styles carry a bound line height of 20px, from 12px captions to 48px headings. The sheet documents one thing; the styles apply another.",
     },
     {
       type: "tradeoff",
       title: "Forty-two instances point to components that no longer exist",
-      body: "Forty-two component instances in the final screens point to components that no longer exist in the file. Anyone who duplicates it sees screens assembled from parts they can't find.",
+      body: "Anyone who duplicates it sees screens assembled from parts they can't find.",
     },
     {
       type: "tradeoff",
