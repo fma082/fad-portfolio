@@ -147,6 +147,26 @@ con la sección de la que salía cada fragmento — incluido el párrafo que con
 el proyecto con bLoyal, que era el único enlace entre el trabajo personal y el
 de producción en todo el repo. No quedó solo en el historial de git.
 
+### Encuadre de la case study (2026-08-03)
+
+**No es una case study de craft de sistemas.** El archivo es de 2021, hecho
+mientras aprendía Figma, con Atomic Design como único método conocido. El eje
+narrativo es que se usó: cinco años en circulación, 3.131 guardados, 1.6k usos.
+Si volvés a escribir copy para este caso, ese es el marco — no "mirá qué bien
+construido está".
+
+`docs/briefs/design-system-gaps.md` tiene el análisis técnico completo detrás de
+la sección "What I'd do differently", clasificado en tres categorías:
+limitaciones de Figma en 2021 (no son errores), decisiones que hoy se harían
+distinto, y deuda sin terminar. Cada hallazgo con su ubicación exacta. También
+lista al final las ocho cosas que **no** se pudieron determinar — no las afirmes
+sin verificar.
+
+**Orden de secciones** (00→08): Overview · Foundations · Five years in
+circulation · What I'd do differently · Components · Modeling the Sidebar ·
+Craft in the matrix · The system in use · The archive. Uso y retrospectiva van
+**antes** del inventario técnico: es lo que sostiene el encuadre nuevo.
+
 ### Pendiente en `/work/design-system`
 
 - **URL de Behance.** No existe en ningún lado del repo — el `links` solo tiene
@@ -155,8 +175,13 @@ de producción en todo el repo. No quedó solo en el historial de git.
   sheet compuesto `15 - Screen.png`. Los frames en Figma son: Dashboard, Order,
   Schedule, Message, List Order Table/Off, Frame 144, Dashboard (1507×1356).
   Se pueden exportar con el Desktop Bridge del plugin.
-- **Copy narrativo de la sección 03** (`Modeling the Sidebar`): faltan el
+- **Copy narrativo de `Modeling the Sidebar`** (hoy sección 05): faltan el
   `decision` y el `tradeoff`. Están marcados con `TODO: copy needed`.
+- **Los backticks de `` `fi:` `` en la sección 03 renderizan literales.** `Prose`
+  no parsea markdown. Hay que sacarlos o darle soporte de inline code al bloque.
+- **`Craft in the matrix` (06) quedó con el título viejo**, que contradice el
+  encuadre nuevo — dice "craft" cuando la case study ahora argumenta lo
+  contrario. Falta decidir si se retitula o se funde con otra sección.
 
 Las capturas viejas se recuperan con
 `git show HEAD~1:"public/images/projects/deftboard/06 - Buttons.png" > out.png`

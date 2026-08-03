@@ -149,18 +149,6 @@ export const designSystem: CaseStudy = {
       title: "A dashboard system built before the tools caught up",
       body: [
         "This system was built in 2021 — before Figma Variables, and before boolean and instance-swap component properties existed. Every token in it is a shared style, and every component property is a variant axis. That constraint is the context for everything below: choices that look verbose today were the only way to express them at the time.",
-        "It was published to the Figma Community, where it has been used 1,600 times, and posted to Behance, where it collected 2,443 likes. The uses matter more than the likes: each one is a person who copied the file into their own account to work in it.",
-      ],
-    },
-    {
-      type: "metrics",
-      items: [
-        {
-          value: "1.6k",
-          label: "Figma Community uses",
-          note: "Copies taken into someone else's account",
-        },
-        { value: "2,443", label: "Behance likes" },
       ],
     },
 
@@ -191,10 +179,73 @@ export const designSystem: CaseStudy = {
     },
     typeList,
 
-    /* ── 02 Components ─────────────────────────────────────────────────── */
+    /* ── 02 Five years in circulation ──────────────────────────────────── */
     {
       type: "section",
       num: "02",
+      label: "Five years in circulation",
+    },
+    {
+      type: "metrics",
+      items: [
+        { value: "51,638", label: "Views" },
+        { value: "2,449", label: "Appreciations" },
+        { value: "3,131", label: "Saves" },
+        { value: "1.6k", label: "Figma Community uses" },
+      ],
+    },
+    {
+      type: "prose",
+      body: [
+        "Published August 2021. Since then: 51,638 views, 2,449 appreciations, 3,131 saves on Behance — and 1.6k uses on Figma Community.",
+        "The saves matter more than the likes. An appreciation means someone thought it looked good. A save means they took it into their own account to work with. Three thousand people did that.",
+        "I built this to learn Figma. It became infrastructure for strangers.",
+      ],
+    },
+
+    /* ── 03 What I'd do differently ────────────────────────────────────── */
+    {
+      type: "section",
+      num: "03",
+      label: "What I'd do differently",
+    },
+    {
+      type: "prose",
+      body: [
+        "The flaws I see now aren't the aesthetic ones. They're the ones that only surface when someone actually uses the file.",
+      ],
+    },
+    /* Three findings, one prose block each. Separate blocks rather than one
+       list so `CaseBody.spacing()` puts a full section step between them. */
+    {
+      type: "prose",
+      body: [
+        "Typography documents two numbers and explains neither. Each step shows something like “24px 32px”. In June 2024, three years after publishing, someone asked me what the second number meant. It's line height — but nothing in the file says so. Worse: 46 of the 73 text styles carry a bound line height of 20px, from 12px captions to 48px headings. The sheet documents one thing; the styles apply another.",
+      ],
+    },
+    {
+      type: "prose",
+      body: [
+        "Forty-two component instances in the final screens point to components that no longer exist in the file. Anyone who duplicates it sees screens assembled from parts they can't find.",
+      ],
+    },
+    {
+      type: "prose",
+      body: [
+        "The 558 icons are two separate libraries wearing one name. Outline uses an `fi:` prefix, solid doesn't. Normalize the names and only 81 appear in both sets — 200 are outline-only, 150 solid-only. You can't swap between styles for most of the icons, because the pair was never built.",
+      ],
+    },
+    {
+      type: "prose",
+      body: [
+        "None of these are visible while building. All of them break the moment someone else picks it up. That's the part a system can only teach you when it has users — which is why this file taught me more than the ones nobody downloaded.",
+      ],
+    },
+
+    /* ── 04 Components ─────────────────────────────────────────────────── */
+    {
+      type: "section",
+      num: "04",
       label: "Components",
       title: "Forty-nine sets, eight hundred and seventeen variants",
       body: [
@@ -203,10 +254,10 @@ export const designSystem: CaseStudy = {
     },
     inventory,
 
-    /* ── 03 Modeling the Sidebar ───────────────────────────────────────── */
+    /* ── 05 Modeling the Sidebar ───────────────────────────────────────── */
     {
       type: "section",
-      num: "03",
+      num: "05",
       label: "Modeling the Sidebar",
       title: "Nine properties, five hundred and twelve combinations, sixteen built",
     },
@@ -231,10 +282,10 @@ export const designSystem: CaseStudy = {
       ],
     },
 
-    /* ── 04 Craft in the matrix ────────────────────────────────────────── */
+    /* ── 06 Craft in the matrix ────────────────────────────────────────── */
     {
       type: "section",
-      num: "04",
+      num: "06",
       label: "Craft in the matrix",
       title: "Three sets that show the rules being applied",
     },
@@ -264,10 +315,10 @@ export const designSystem: CaseStudy = {
       body: "Photo Avatar and Initials Avatar were consolidated into one 32-variant set, but neither original was removed from the file — both still sit outside the page tree with 68 live instances pointing at them. The consolidation is real; the cleanup stopped halfway.",
     },
 
-    /* ── 05 The system in use ──────────────────────────────────────────── */
+    /* ── 07 The system in use ──────────────────────────────────────────── */
     {
       type: "section",
-      num: "05",
+      num: "07",
       label: "The system in use",
       title: `${titleCase(spell(SCREENS.length))} screens assembled from the library`,
     },
@@ -280,10 +331,10 @@ export const designSystem: CaseStudy = {
       images: [screenImage(SCREENS[2]), screenImage(SCREENS[3])],
     },
 
-    /* ── 06 The archive ────────────────────────────────────────────────── */
+    /* ── 08 The archive ────────────────────────────────────────────────── */
     {
       type: "section",
-      num: "06",
+      num: "08",
       label: "The archive",
       title: "The file, as it is published",
     },
