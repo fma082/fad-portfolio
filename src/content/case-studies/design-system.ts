@@ -129,7 +129,7 @@ export const designSystem: CaseStudy = {
 
   links: {
     figma: ds.source.url,
-    /* TODO: links needed — no Behance URL for this project anywhere in the repo. */
+    behance: "https://www.behance.net/gallery/125691923/Figma-Design-System",
   },
 
   stats: [

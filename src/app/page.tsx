@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { AccentToken } from "@/types/accent";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 /* ─── SectionHeader (reused across all sections) ─────────────────────────── */
 
@@ -85,50 +87,60 @@ const pillars: Pillar[] = [
   },
 ];
 
+/* Where a card sends you. `case` is the generic case-study route; `external`
+   opens a live artefact when the case study does not exist yet; `none` renders
+   a card that is deliberately not clickable. Swapping a project between the
+   three is a one-line change in the data below. */
+type ProjectLink =
+  | { kind: "case"; slug: string }
+  | { kind: "external"; href: string; label: string }
+  | { kind: "none"; label: string };
+
 type Project = {
-  slug: string;
   title: string;
   tags: string[];
   type: string;
   desc: string;
   accent: AccentToken;
+  link: ProjectLink;
   /* Preview image. Without one the card falls back to the accent gradient. */
   thumb?: string;
 };
 
 const projects: Project[] = [
   {
-    slug: "next-agent",   // → /work/next-agent
-    title: "Next Agent",
-    tags: ["AI SaaS", "Design System", "Next.js", "Product Design"],
-    type: "AI Agent Orchestration Platform · Personal product · Design + Dev",
-    desc: "A platform where teams deploy, monitor, and orchestrate multiple AI agents from a single dashboard.",
+    title: "Fluuen",
+    tags: ["Design System", "Design Tokens", "AI SaaS", "Next.js"],
+    type: "Personal product · Design system + AI product · 2026",
+    desc: "A three-layer token architecture synced from Figma to code by a custom pipeline — and the AI agent product built on top of it to test whether the system held.",
     accent: "violet",
+    /* The Storybook is the argument: tokens parsed from the production build,
+       so the documentation cannot drift. The product demo is secondary to it. */
+    link: {
+      kind: "external",
+      href: "https://fluuen-storybook.vercel.app/",
+      label: "View the system ↗",
+    },
   },
   {
-    slug: "ai-patterns",
-    title: "AI Interface Patterns",
-    tags: ["AI UX", "Research", "Pattern Library"],
-    type: "Research catalog · 50+ patterns · 10 categories",
-    desc: "A comprehensive catalog of interface patterns for AI products — from initial CTAs to orchestration dashboards.",
+    title: "Countersign",
+    tags: ["AI UX", "Agent Governance", "Research", "Next.js"],
+    type: "Personal product · AI agent governance · 2026",
+    desc: "An AI agent that runs reads on its own, pauses after reversible writes, and stops for a human before destructive ones. Friction before or friction after, never both.",
     accent: "teal",
+    /* Not linked on purpose: the demo carries state shared across visitors and
+       /scenario never says the data is fictional. That needs a line of framing
+       the home page has nowhere to put. */
+    link: { kind: "none", label: "Case study in progress" },
   },
   {
-    slug: "design-system",
     title: "Dashboard Design System",
     tags: ["Design System", "UI Kit", "Figma"],
     type: "Personal project · Atomic Design · 2021",
     desc: "A Figma design system for dashboard products — 49 component sets, 817 variants, used 1,600 times on Figma Community.",
     accent: "blue",
+    link: { kind: "case", slug: "design-system" },
     thumb: "/images/projects/design-system/cover.png",
-  },
-  {
-    slug: "bloyal",
-    title: "bLoyal Design System",
-    tags: ["Design System", "B2B SaaS", "Design QA"],
-    type: "Client work · AI Loyalty Platform · In production",
-    desc: "Token architecture, component audits, and Design QA for an AI-powered CRM platform.",
-    accent: "green",
   },
 ];
 
@@ -162,14 +174,19 @@ function ProjectCard({
   project: Project;
   featured?: boolean;
 }) {
-  const { slug, title, tags, type, desc, accent, thumb } = project;
+  const { title, tags, type, desc, accent, thumb, link } = project;
+  const clickable = link.kind !== "none";
 
-  return (
-    <Link
-      href={`/work/${slug}`}
-      data-accent={accent}
-      className="group flex flex-col border border-border bg-card hover:border-border-strong hover:-translate-y-0.5 transition-all duration-300"
-    >
+  /* A card that goes nowhere must not offer the affordances of one that does:
+     no lift, no border change, no pointer. */
+  const shell = `group flex flex-col border border-border bg-card ${
+    clickable
+      ? "hover:border-border-strong hover:-translate-y-0.5 transition-all duration-300"
+      : ""
+  }`;
+
+  const body = (
+    <>
       {/* Preview — cover image when the project has one, accent gradient when
           it does not. `alt` is empty on purpose: the card title right below
           already names the link, so a description here would be read twice. */}
@@ -227,37 +244,45 @@ function ProjectCard({
           {desc}
         </p>
 
-        <span className="font-mono text-xs text-violet group-hover:text-violet-dim transition-colors duration-200 mt-auto">
-          View case study →
+        <span
+          className={`font-mono text-xs mt-auto ${
+            clickable
+              ? "text-violet group-hover:text-violet-dim transition-colors duration-200"
+              : "text-fg-faint"
+          }`}
+        >
+          {link.kind === "case" ? "View case study →" : link.label}
         </span>
       </div>
-    </Link>
+    </>
   );
-}
 
-/* ─── Nav ────────────────────────────────────────────────────────────────── */
+  if (link.kind === "case") {
+    return (
+      <Link href={`/work/${link.slug}`} data-accent={accent} className={shell}>
+        {body}
+      </Link>
+    );
+  }
 
-function Navbar() {
+  if (link.kind === "external") {
+    return (
+      <a
+        href={link.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-accent={accent}
+        className={shell}
+      >
+        {body}
+      </a>
+    );
+  }
+
   return (
-    <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-canvas/90 backdrop-blur-sm">
-      <div className="max-w-screen-xl mx-auto px-6 lg:px-12 flex items-center justify-between h-14">
-        <Link href="/" className="font-mono text-sm font-medium text-fg">
-          fad<span className="text-violet">.design</span>
-        </Link>
-
-        <nav className="flex items-center gap-8" aria-label="Main">
-          {(["Work", "About", "Contact"] as const).map((label) => (
-            <a
-              key={label}
-              href={`#${label.toLowerCase()}`}
-              className="font-mono text-xs tracking-widest text-fg-muted uppercase hover:text-fg transition-colors duration-200"
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
-      </div>
-    </header>
+    <article data-accent={accent} className={shell}>
+      {body}
+    </article>
   );
 }
 
@@ -353,7 +378,7 @@ function ProofOfWork() {
             <ProjectCard project={featured} featured />
           </div>
           {rest.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+            <ProjectCard key={project.title} project={project} />
           ))}
         </div>
       </div>
@@ -482,28 +507,6 @@ function Contact() {
         </div>
       </div>
     </section>
-  );
-}
-
-/* ─── Footer ─────────────────────────────────────────────────────────────── */
-
-function Footer() {
-  return (
-    <footer className="border-t border-border">
-      <div className="max-w-screen-xl mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 py-6">
-        <span className="font-mono text-xs text-fg-faint">
-          © 2026 Facundo Almirón
-        </span>
-        <span className="font-mono text-xs text-fg-faint">
-          Built with{" "}
-          <span className="text-violet">Next.js</span>
-          {" "}+{" "}
-          <span className="text-violet">Tailwind</span>
-          {" · "}Deployed on{" "}
-          <span className="text-violet">Vercel</span>
-        </span>
-      </div>
-    </footer>
   );
 }
 

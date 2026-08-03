@@ -33,7 +33,8 @@ export function Prose({ block }: { block: ProseBlock }) {
 export function DecisionBox({ block }: { block: DecisionBlock }) {
   return (
     <div className="max-w-3xl border-l-2 border-(--accent) bg-(--accent)/5 pl-6 pr-5 py-5">
-      <h3 className="font-mono text-[10px] tracking-[0.2em] uppercase text-(--accent) mb-3">
+      {/* Same label tier as TradeoffBox and SectionDivider — see the note there. */}
+      <h3 className="font-mono text-xs tracking-[0.2em] uppercase text-(--accent) mb-3">
         {block.title}
       </h3>
       <p className="font-sans text-base text-fg-muted leading-relaxed">

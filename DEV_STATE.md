@@ -100,23 +100,27 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
 - [x] Extraer los datos reales del Figma del Design System a `_data/`.
 - [x] Case study: Design System (`/work/design-system`).
 - [x] Cerrar el solapamiento `deftboard` / `design-system` (2026-08-03).
-- [ ] Extraer Navbar / Footer de `page.tsx` a `src/components/layout/`.
+- [x] Extraer Navbar / Footer de `page.tsx` a `src/components/layout/` (2026-08-03).
+- [x] Actualizar las cards de la home a los 3 proyectos reales (2026-08-03).
 - [ ] Case study: Fluuen.
 - [ ] Case study: Countersign.
-- [ ] Actualizar las cards de la home a los 3 proyectos reales.
 
 ---
 
 ## Anti-patterns observados — corregir si aparecen
 
-- **Archivos de página monolíticos.** La página del case study (515 líneas) ya
-  no existe: es data + una página genérica de 58 líneas. Queda `src/app/page.tsx`
-  (499 líneas) con Navbar/Footer/Hero adentro. Objetivo: ninguna página arriba
-  de ~150 líneas.
+- **Archivos de página monolíticos.** `src/app/page.tsx` **creció**: 510 → 464 al
+  sacar Navbar y Footer, y 464 → 529 al agregarle a `ProjectCard` los tres
+  estados de link. Sacar dos componentes chicos no compensa meter lógica nueva.
+  Lo que queda adentro son las cinco secciones de la home (Hero, WhatIDo,
+  ProofOfWork, About, Contact) más `ProjectCard` y su data. **`ProjectCard` es el
+  próximo a extraer** — ya no es markup, tiene ramas.
 - ~~**Accents como string hex pasados por prop**~~ — resuelto con `data-accent`
   (ver decisiones cerradas). Si reaparece un `accent` como prop, es un regreso.
-- **Rutas legacy**: `/work/next-agent`, `/work/bloyal`, `/work/ai-patterns` son
-  stubs "Coming soon" de proyectos que no van más. Preguntar antes de borrarlas.
+- ~~**Rutas legacy**~~ — los tres stubs (`next-agent`, `bloyal`, `ai-patterns`)
+  se borraron el 2026-08-03. `src/app/work/` tiene solo `[slug]` y `layout.tsx`.
+  Si aparece una ruta estática nueva bajo `work/`, es un regreso: le gana a
+  `[slug]` silenciosamente.
 
 ---
 
@@ -169,14 +173,41 @@ Inside the library · The system in use · The archive. Uso y retrospectiva van
 La 06 se llamaba "Craft in the matrix" y se renombró: decía "craft" justo donde
 la case study argumenta que no se trata de eso.
 
+### Cards de la home (2026-08-03)
+
+Tres proyectos: **Fluuen** (destacada, violet) · **Countersign** (teal) ·
+**Dashboard Design System** (blue). `next-agent` era Fluuen con el nombre viejo,
+no un proyecto aparte. `bloyal` salió del portfolio (era trabajo con NDA) y
+`ai-patterns` no va como case study propia: ese research se absorbe como
+sección 01 de Countersign.
+
+**El destino de cada card es una union discriminada**, no un slug suelto:
+
+```ts
+type ProjectLink =
+  | { kind: "case"; slug: string }        // → /work/[slug]
+  | { kind: "external"; href; label }     // artefacto en vivo
+  | { kind: "none"; label }               // <article>, no clickeable
+```
+
+Por qué no hay stubs "Coming soon": `generateStaticParams` deriva las rutas de
+`caseStudySlugs`, así que un slug sin content file es **404 duro**, no un
+placeholder. Y crear una ruta estática para taparlo es el anti-pattern de arriba.
+La card sin link pierde el `hover:-translate-y-0.5` y el CTA va en `text-fg-faint`
+— sin afordancia de click no hay frustración.
+
+Fluuen linkea al **Storybook**, no al demo: los tokens salen parseados del build
+de producción, así que la documentación no puede driftear. Esa es la tesis del
+proyecto; el producto es secundario a ella.
+Countersign va **sin link a propósito**: el demo comparte estado entre visitantes
+y `/scenario` no avisa que los datos son ficticios. Alguien que cae ahí sin
+contexto puede encontrarlo ya destruido por otro. Desde una case study se
+encuadra con una línea de copy; desde la home, no.
+
 ### Pendiente en `/work/design-system`
 
-- **URL de Behance.** No existe en ningún lado del repo — el `links` solo tiene
-  Figma. El copy del Overview cita los 2.443 likes pero no linkea a nada.
-- **Las 7 pantallas como imágenes sueltas.** En `public/images/` solo está el
-  sheet compuesto `15 - Screen.png`. Los frames en Figma son: Dashboard, Order,
-  Schedule, Message, List Order Table/Off, Frame 144, Dashboard (1507×1356).
-  Se pueden exportar con el Desktop Bridge del plugin.
+- **Las 4 pantallas ya están** en `public/images/projects/design-system/`.
+  El sheet compuesto `15 - Screen.png` se borró.
 - **Copy narrativo de `Modeling the Sidebar`** (hoy sección 05): faltan el
   `decision` y el `tradeoff`. Están marcados con `TODO: copy needed`.
 - **Los tres hallazgos de la sección 03 son `tradeoff`, no `prose`.** El campo
