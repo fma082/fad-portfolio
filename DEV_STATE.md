@@ -164,8 +164,10 @@ sin verificar.
 
 **Orden de secciones** (00→08): Overview · Foundations · Five years in
 circulation · What I'd do differently · Components · Modeling the Sidebar ·
-Craft in the matrix · The system in use · The archive. Uso y retrospectiva van
+Inside the library · The system in use · The archive. Uso y retrospectiva van
 **antes** del inventario técnico: es lo que sostiene el encuadre nuevo.
+La 06 se llamaba "Craft in the matrix" y se renombró: decía "craft" justo donde
+la case study argumenta que no se trata de eso.
 
 ### Pendiente en `/work/design-system`
 
@@ -177,11 +179,14 @@ Craft in the matrix · The system in use · The archive. Uso y retrospectiva van
   Se pueden exportar con el Desktop Bridge del plugin.
 - **Copy narrativo de `Modeling the Sidebar`** (hoy sección 05): faltan el
   `decision` y el `tradeoff`. Están marcados con `TODO: copy needed`.
-- **Los backticks de `` `fi:` `` en la sección 03 renderizan literales.** `Prose`
-  no parsea markdown. Hay que sacarlos o darle soporte de inline code al bloque.
-- **`Craft in the matrix` (06) quedó con el título viejo**, que contradice el
-  encuadre nuevo — dice "craft" cuando la case study ahora argumenta lo
-  contrario. Falta decidir si se retitula o se funde con otra sección.
+- **Los tres hallazgos de la sección 03 son `tradeoff`, no `prose`.** El campo
+  ámbar es el registro correcto para "esto me costó" y el título evita que los
+  tres párrafos se lean como un bloque continuo. Ojo: en dos de los tres, el
+  título repite la primera oración del body — está así a propósito hasta que
+  Facundo decida si recorta.
+- **`Prose` no parsea markdown.** No le metas backticks ni asteriscos al copy:
+  renderizan literales. Si algún día hace falta inline code, es un bloque nuevo,
+  no un parser.
 
 Las capturas viejas se recuperan con
 `git show HEAD~1:"public/images/projects/deftboard/06 - Buttons.png" > out.png`

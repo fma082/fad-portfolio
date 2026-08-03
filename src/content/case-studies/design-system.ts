@@ -215,25 +215,22 @@ export const designSystem: CaseStudy = {
         "The flaws I see now aren't the aesthetic ones. They're the ones that only surface when someone actually uses the file.",
       ],
     },
-    /* Three findings, one prose block each. Separate blocks rather than one
-       list so `CaseBody.spacing()` puts a full section step between them. */
+    /* Three findings as titled fields. The amber register carries the section:
+       these are costs that only became visible once the file had users. */
     {
-      type: "prose",
-      body: [
-        "Typography documents two numbers and explains neither. Each step shows something like “24px 32px”. In June 2024, three years after publishing, someone asked me what the second number meant. It's line height — but nothing in the file says so. Worse: 46 of the 73 text styles carry a bound line height of 20px, from 12px captions to 48px headings. The sheet documents one thing; the styles apply another.",
-      ],
+      type: "tradeoff",
+      title: "Typography documents two numbers and explains neither",
+      body: "Typography documents two numbers and explains neither. Each step shows something like “24px 32px”. In June 2024, three years after publishing, someone asked me what the second number meant. It's line height — but nothing in the file says so. Worse: 46 of the 73 text styles carry a bound line height of 20px, from 12px captions to 48px headings. The sheet documents one thing; the styles apply another.",
     },
     {
-      type: "prose",
-      body: [
-        "Forty-two component instances in the final screens point to components that no longer exist in the file. Anyone who duplicates it sees screens assembled from parts they can't find.",
-      ],
+      type: "tradeoff",
+      title: "Forty-two instances point to components that no longer exist",
+      body: "Forty-two component instances in the final screens point to components that no longer exist in the file. Anyone who duplicates it sees screens assembled from parts they can't find.",
     },
     {
-      type: "prose",
-      body: [
-        "The 558 icons are two separate libraries wearing one name. Outline uses an `fi:` prefix, solid doesn't. Normalize the names and only 81 appear in both sets — 200 are outline-only, 150 solid-only. You can't swap between styles for most of the icons, because the pair was never built.",
-      ],
+      type: "tradeoff",
+      title: "The icons are two libraries wearing one name",
+      body: "The 558 icons span five sets, and the two main ones don't line up. Outline uses an fi: prefix, solid doesn't. Normalize the names and only 81 appear in both sets — 200 are outline-only, 150 solid-only. You can't swap between styles for most of the icons, because the pair was never built.",
     },
     {
       type: "prose",
@@ -282,11 +279,11 @@ export const designSystem: CaseStudy = {
       ],
     },
 
-    /* ── 06 Craft in the matrix ────────────────────────────────────────── */
+    /* ── 06 Inside the library ─────────────────────────────────────────── */
     {
       type: "section",
       num: "06",
-      label: "Craft in the matrix",
+      label: "Inside the library",
       title: "Three sets that show the rules being applied",
     },
     {
