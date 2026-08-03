@@ -173,9 +173,12 @@ function ProjectCard({
       {/* Preview — cover image when the project has one, accent gradient when
           it does not. `alt` is empty on purpose: the card title right below
           already names the link, so a description here would be read twice. */}
+      {/* 4:3 rather than 16:9 so a cover exported from a design file fits
+          without cropping. The Design System cover is padded to that ratio in
+          its own background colour, so `object-cover` has nothing to cut. */}
       <div
         className={`relative overflow-hidden border-b border-border ${
-          featured ? "aspect-21/9" : "aspect-video"
+          featured ? "aspect-21/9" : "aspect-4/3"
         }`}
       >
         {thumb ? (
