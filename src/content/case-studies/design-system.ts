@@ -186,7 +186,7 @@ export const designSystem: CaseStudy = {
     {
       type: "prose",
       body: [
-        "The type scale below is the one the file prints next to each specimen. The bound text styles carry a uniform 20px line-height, which is an artefact of how Figma handled line-height in 2021 rather than a design decision — the annotated values are the intended scale.",
+        "The type scale below is the one the file prints next to each specimen — the intended scale. What is actually bound diverges from it in half the steps: 46 of the 73 text styles carry a line-height of exactly 20px, from 12px body copy up to 48px headings.",
       ],
     },
     typeList,
@@ -244,7 +244,7 @@ export const designSystem: CaseStudy = {
         {
           num: "01",
           title: "Default-button",
-          body: "135 variants: type × filled/outline × three sizes × five states × three icon positions. The matrix is complete, with no gaps, and the five states cover the full interaction set — default, hover, focus, active, disabled.",
+          body: "135 variants of a possible 180: type × filled/outline × three sizes × five states × three icon positions. Every combination exists except secondary outline, whose 45 are absent. The five states cover the full interaction set — default, hover, focus, active, disabled.",
         },
         {
           num: "02",
