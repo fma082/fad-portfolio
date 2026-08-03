@@ -9,6 +9,13 @@ import {
   Quote,
 } from "./blocks/TextBlocks";
 import { Metrics, CardGrid, Chips } from "./blocks/DataBlocks";
+import {
+  TokenTable,
+  ComponentInventory,
+  VariantMatrix,
+  SpecList,
+} from "./blocks/SpecBlocks";
+import { FigmaEmbed } from "./blocks/FigmaEmbed";
 
 export function BlockRenderer({ block }: { block: Block }) {
   switch (block.type) {
@@ -39,6 +46,16 @@ export function BlockRenderer({ block }: { block: Block }) {
       return <CardGrid block={block} />;
     case "chips":
       return <Chips block={block} />;
+    case "tokenTable":
+      return <TokenTable block={block} />;
+    case "componentInventory":
+      return <ComponentInventory block={block} />;
+    case "variantMatrix":
+      return <VariantMatrix block={block} />;
+    case "specList":
+      return <SpecList block={block} />;
+    case "figmaEmbed":
+      return <FigmaEmbed block={block} />;
     default: {
       /* Adding a member to the Block union without a case above is a
          compile error here, not a silently blank section. */

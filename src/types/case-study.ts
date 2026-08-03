@@ -5,8 +5,7 @@ import type { AccentToken } from "./accent";
 export type CaseMeta = {
   slug: string;
   /* Wrap a fragment in *asterisks* to render it in the accent colour:
-     "DeftBoard: a complete *Design System* built from first principles".
-     generateMetadata strips the markers. */
+     "Dashboard *Design System*". generateMetadata strips the markers. */
   title: string;
   subtitle: string;
   year: string;
@@ -83,6 +82,58 @@ export type ChipsBlock = {
   items: { label: string; value: string }[];
 };
 
+/* ─── Spec blocks ────────────────────────────────────────────────────────── */
+/* These render extracted design-system data as tables instead of screenshots.
+   Names arrive verbatim from the source file — typos included — because the
+   published artefact is what a reader would download. Never normalise them. */
+
+export type TokenTableBlock = {
+  type: "tokenTable";
+  title?: string;
+  groups: {
+    name: string;
+    /* `value` is displayed as-is and used as the swatch colour, so it has to be
+       a valid CSS colour: "#3C76F1", "rgba(0, 0, 0, 0.05)". */
+    tokens: { name: string; value: string; note?: string }[];
+  }[];
+};
+
+export type ComponentInventoryBlock = {
+  type: "componentInventory";
+  summary?: string;
+  /* Rendered in array order — the content file owns the sort. */
+  sets: {
+    name: string;
+    variants: number;
+    properties: { name: string; options: string[] }[];
+    instances?: number;
+  }[];
+};
+
+/* The full variant matrix against the subset actually built. */
+export type VariantMatrixBlock = {
+  type: "variantMatrix";
+  title: string;
+  axes: { name: string; options: string[] }[];
+  built: number;
+  theoretical: number;
+  note: string;
+};
+
+/* Generic label/value spec sheet — breakpoints, grids, type steps. */
+export type SpecListBlock = {
+  type: "specList";
+  items: { label: string; value: string; note?: string }[];
+};
+
+/* Live Figma embed. Mounted only once it enters the viewport. */
+export type FigmaEmbedBlock = {
+  type: "figmaEmbed";
+  url: string;
+  caption?: string;
+  height?: number;
+};
+
 export type Block =
   | SectionBlock
   | ProseBlock
@@ -93,7 +144,12 @@ export type Block =
   | MetricsBlock
   | QuoteBlock
   | CardGridBlock
-  | ChipsBlock;
+  | ChipsBlock
+  | TokenTableBlock
+  | ComponentInventoryBlock
+  | VariantMatrixBlock
+  | SpecListBlock
+  | FigmaEmbedBlock;
 
 /* ─── Case study ─────────────────────────────────────────────────────────── */
 

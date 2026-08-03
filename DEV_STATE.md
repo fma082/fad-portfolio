@@ -3,7 +3,7 @@
 Estado vivo del proyecto. Claude Code: leé esto al empezar cada sesión.
 Actualizalo al cerrar una fase o después de una decisión de arquitectura.
 
-Última actualización: 2026-08-02
+Última actualización: 2026-08-03
 
 ---
 
@@ -11,7 +11,7 @@ Actualizalo al cerrar una fase o después de una decisión de arquitectura.
 
 **Fase 2 — Refactor a case studies data-driven**
 
-La Fase 1 (home + DeftBoard + tokens) está cerrada y en producción.
+La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
 
 ---
 
@@ -54,8 +54,34 @@ La Fase 1 (home + DeftBoard + tokens) está cerrada y en producción.
   - Los `*asteriscos*` en `meta.title` marcan el fragmento que va en accent.
     `generateMetadata` los saca para el `<title>`.
   - **La ruta estática de un caso migrado hay que borrarla.** Next le da
-    prioridad a la estática sobre `[slug]`, así que `work/deftboard/page.tsx`
-    habría ganado silenciosamente. Los stubs siguen vivos por esa misma razón.
+    prioridad a la estática sobre `[slug]`, así que la página estática del caso
+    migrado habría ganado silenciosamente. Los stubs siguen vivos por esa razón.
+  - Al revés: sacar un caso del array de `index.ts` **alcanza** para que su ruta
+    desaparezca, porque el slug sale de `generateStaticParams`. Así se retiró
+    `/work/deftboard` — no había ruta estática que borrar.
+- **Datos de Figma como data extraída, no como capturas** (2026-08-03).
+  `src/content/case-studies/_data/design-system.ts` tiene el volcado tipado del
+  archivo de Figma (10 rampas, 73 text styles, 49 component sets, 817 variants,
+  558 íconos). El content file **deriva** las tablas de ahí — ningún número se
+  reescribe a mano. Si el archivo de Figma cambia, se regenera `_data/` y las
+  tablas siguen.
+  - **Los nombres de token van verbatim**, typos incluidos (`Succes`,
+    `Alert / Danger/ 100 ` con espacios). El archivo está publicado con 1.6k
+    usos: la tabla tiene que coincidir con lo que la gente se descarga.
+    `TokenTable` por eso **no trunca** nombres, los deja envolver.
+  - **El orden del inventario vive en el content file, no en el componente.**
+    `ComponentInventory` renderiza `sets` en el orden del array. `design-system.ts`
+    lo ordena por cantidad de variants descendente. Así otro caso puede agrupar
+    por página sin tocar el componente.
+  - `FigmaEmbed` es el único bloque `"use client"`: monta el iframe recién
+    cuando entra al viewport (IntersectionObserver, `rootMargin: 200px`).
+    El placeholder reserva la misma altura para que no salte el layout.
+  - **Cuidado con `first:` cuando el contenedor tiene header.** En
+    `ComponentInventory` la fila de headers es el primer hijo, así que
+    `first:border-t-0` no matcheaba la fila 0 y daba línea doble. Se resuelve
+    por índice, no por pseudo-clase.
+  - `CaseHero` pasó de `md:grid-cols-4` a `md:grid-cols-[repeat(auto-fit,…)]`
+    en la barra de stats, para que 4 o 5 stats entren igual en una fila.
 
 ---
 
@@ -66,10 +92,14 @@ La Fase 1 (home + DeftBoard + tokens) está cerrada y en producción.
 - [x] Crear `src/types/case-study.ts` con el tipo `CaseStudy` y la union `Block`.
 - [x] Bloques de la fase: `section`, `prose`, `decision`, `tradeoff`, `image`,
       `imageGrid`, `metrics`, `quote`, `cardGrid`, `chips`.
-      Pendientes para más adelante: `FigmaEmbed`, `LiveDemo`, `CodePeek`, `DemoFrame`.
+- [x] Bloques de spec (2026-08-03): `tokenTable`, `componentInventory`,
+      `variantMatrix`, `specList`, `figmaEmbed`.
+      Pendientes para más adelante: `LiveDemo`, `CodePeek`, `DemoFrame`.
 - [x] `BlockRenderer` con switch exhaustivo.
 - [x] Página genérica `src/app/work/[slug]/page.tsx` + `generateStaticParams`.
-- [x] Migrar DeftBoard al sistema nuevo (sin cambiar el resultado visual).
+- [x] Extraer los datos reales del Figma del Design System a `_data/`.
+- [x] Case study: Design System (`/work/design-system`).
+- [x] Cerrar el solapamiento `deftboard` / `design-system` (2026-08-03).
 - [ ] Extraer Navbar / Footer de `page.tsx` a `src/components/layout/`.
 - [ ] Case study: Fluuen.
 - [ ] Case study: Countersign.
@@ -79,8 +109,8 @@ La Fase 1 (home + DeftBoard + tokens) está cerrada y en producción.
 
 ## Anti-patterns observados — corregir si aparecen
 
-- **Archivos de página monolíticos.** `work/deftboard/page.tsx` (515) ya no
-  existe: es data + una página genérica de 58 líneas. Queda `src/app/page.tsx`
+- **Archivos de página monolíticos.** La página del case study (515 líneas) ya
+  no existe: es data + una página genérica de 58 líneas. Queda `src/app/page.tsx`
   (499 líneas) con Navbar/Footer/Hero adentro. Objetivo: ninguna página arriba
   de ~150 líneas.
 - ~~**Accents como string hex pasados por prop**~~ — resuelto con `data-accent`
@@ -102,9 +132,35 @@ Claude Code no puede inventar esto. Si falta, dejar `{/* TODO: copy needed */}`.
 
 Los briefs van en `docs/briefs/[proyecto].md`.
 
-**Falta también**: DeftBoard no tiene URL de Figma ni de Behance en ningún lado
-del repo, así que su `links: {}` está vacío y `CaseLinks` no renderiza nada.
-Pasame las URLs y aparece la fila de links en el hero.
+### Fork cerrado: `deftboard` → `design-system` (2026-08-03)
+
+Eran **el mismo proyecto**: el mismo archivo de Figma, documentado con capturas
+en un caso y con data extraída en el otro. Quedó `design-system`.
+
+Lo que se hizo: se borró `deftboard.ts` y salió del index; la card de la home
+pasó a apuntar a `/work/design-system` con el año corregido a 2021; se
+renombró `public/images/projects/deftboard/` → `design-system/` y se borraron
+las 14 capturas de documentación (~3,1 MB). Sobrevive `15 - Screen.png`.
+
+**El copy narrativo escrito a mano está en `docs/briefs/design-system-copy.md`**,
+con la sección de la que salía cada fragmento — incluido el párrafo que conecta
+el proyecto con bLoyal, que era el único enlace entre el trabajo personal y el
+de producción en todo el repo. No quedó solo en el historial de git.
+
+### Pendiente en `/work/design-system`
+
+- **URL de Behance.** No existe en ningún lado del repo — el `links` solo tiene
+  Figma. El copy del Overview cita los 2.443 likes pero no linkea a nada.
+- **Las 7 pantallas como imágenes sueltas.** En `public/images/` solo está el
+  sheet compuesto `15 - Screen.png`. Los frames en Figma son: Dashboard, Order,
+  Schedule, Message, List Order Table/Off, Frame 144, Dashboard (1507×1356).
+  Se pueden exportar con el Desktop Bridge del plugin.
+- **Copy narrativo de la sección 03** (`Modeling the Sidebar`): faltan el
+  `decision` y el `tradeoff`. Están marcados con `TODO: copy needed`.
+
+Las capturas viejas se recuperan con
+`git show HEAD~1:"public/images/projects/deftboard/06 - Buttons.png" > out.png`
+si alguna vez hacen falta.
 
 ---
 

@@ -111,11 +111,11 @@ const projects: Project[] = [
     accent: "teal",
   },
   {
-    slug: "deftboard",
-    title: "Deftboard Design System",
+    slug: "design-system",
+    title: "Dashboard Design System",
     tags: ["Design System", "UI Kit", "Figma"],
-    type: "Personal project · Atomic Design · 2022",
-    desc: "A complete Figma Design System built from first principles — 2,443+ likes on Behance.",
+    type: "Personal project · Atomic Design · 2021",
+    desc: "A Figma design system for dashboard products — 49 component sets, 817 variants, used 1,600 times on Figma Community.",
     accent: "blue",
   },
   {

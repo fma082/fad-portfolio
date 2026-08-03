@@ -1,8 +1,8 @@
 import type { CaseStudy } from "@/types/case-study";
-import { deftboard } from "./deftboard";
+import { designSystem } from "./design-system";
 
 /* Adding a project means adding a content file and one line here. */
-const studies: CaseStudy[] = [deftboard];
+const studies: CaseStudy[] = [designSystem];
 
 export const caseStudies: Record<string, CaseStudy> = Object.fromEntries(
   studies.map((study) => [study.meta.slug, study]),
