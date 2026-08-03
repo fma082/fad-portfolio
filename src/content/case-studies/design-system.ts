@@ -15,6 +15,26 @@ const rgba = (hex: string, opacity: number) => {
 const titleCase = (value: string) =>
   value.charAt(0).toUpperCase() + value.slice(1);
 
+/* The Figma file holds seven screen frames, but two are duplicate Dashboards
+   and one is an untitled scratch frame. These are the four distinct screens. */
+const SCREENS = [
+  { file: "Dashboard.png", name: "Dashboard" },
+  { file: "Order.jpg", name: "Order" },
+  { file: "Schedule.png", name: "Schedule" },
+  { file: "Message.png", name: "Message" },
+] as const;
+
+/* Headings read better spelled out; the count still drives it. */
+const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven"];
+const spell = (n: number) => WORDS[n] ?? String(n);
+
+const screenImage = ({ file, name }: (typeof SCREENS)[number]) => ({
+  src: IMG(file),
+  alt: `${name} screen built from the design system components`,
+  caption: name,
+  tag: "Screen",
+});
+
 const sidebar = ds.componentSets.find((set) => set.name === "Sidebar");
 const sidebarAxes = sidebar?.properties ?? [];
 /* The full cartesian product of the nine axes, against what exists. */
@@ -117,7 +137,7 @@ export const designSystem: CaseStudy = {
     { value: String(ds.counts.variants), label: "Variants" },
     { value: String(ds.counts.icons), label: "Icons" },
     { value: String(ds.counts.stylesTotal), label: "Styles" },
-    { value: String(ds.screens.length), label: "Screens" },
+    { value: String(SCREENS.length), label: "Screens" },
   ],
 
   blocks: [
@@ -249,18 +269,16 @@ export const designSystem: CaseStudy = {
       type: "section",
       num: "05",
       label: "The system in use",
-      title: "Seven screens assembled from the library",
+      title: `${titleCase(spell(SCREENS.length))} screens assembled from the library`,
     },
     {
-      type: "image",
-      src: IMG("15 - Screen.png"),
-      alt: "Dashboard screens assembled from the design system components",
-      caption: "Screen templates built from the library",
-      tag: "Screens",
+      type: "imageGrid",
+      images: [screenImage(SCREENS[0]), screenImage(SCREENS[1])],
     },
-    /* TODO: assets needed — the seven screen frames are not in public/images/.
-       Only this composite sheet exists. Frames in Figma: Dashboard, Order,
-       Schedule, Message, List Order Table/Off, Frame 144, Dashboard (1507). */
+    {
+      type: "imageGrid",
+      images: [screenImage(SCREENS[2]), screenImage(SCREENS[3])],
+    },
 
     /* ── 06 The archive ────────────────────────────────────────────────── */
     {

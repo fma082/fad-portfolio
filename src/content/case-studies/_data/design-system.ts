@@ -733,5 +733,6 @@ export const designSystemData: DesignSystemData = {
     "The Typography page binds two color styles that are not local to the file — grey/black #1B2326 and grey/default #828282 — so they come from a library, not from the ramps above.",
     "Two pages are named 'Status-number' twice under Buttons; the duplicate is preserved as it appears.",
     "560 standalone components exist outside component sets; 558 of them are the icon library.",
+    "The screen page holds 7 frames but only 4 distinct screens: Dashboard appears twice (1440 and 1507 wide) and 'Frame 144' is an untitled scratch frame. `screens` records what is in the file; the case study shows the four.",
   ],
 };

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { imageSize } from "@/lib/image-size";
 
 export type ImageFrameProps = {
   src: string;
@@ -15,18 +16,21 @@ export function ImageFrame({
   tag,
   sizes = "(max-width: 768px) 100vw, 1200px",
 }: ImageFrameProps) {
+  /* The frame takes the shape of the image instead of forcing one. A fixed
+     ratio letterboxed anything that was not 16:9 — dashboard captures are
+     nearly square, and documentation sheets are far taller than they are wide. */
+  const { width, height } = imageSize(src);
+
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
-      {/* Image container — object-contain shows full screenshot without crop */}
-      <div className="relative w-full bg-card" style={{ aspectRatio: "16 / 9" }}>
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          className="object-contain"
-          sizes={sizes}
-        />
-      </div>
+      <Image
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        sizes={sizes}
+        className="block w-full h-auto"
+      />
 
       {/* Caption bar */}
       {(caption || tag) && (

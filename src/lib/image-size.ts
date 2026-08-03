@@ -1,0 +1,72 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
+/* Intrinsic image dimensions, read from `public/` at build time.
+   `next/image` needs width and height whenever `src` is a runtime string
+   instead of a static import. Reading the file header here means the ratio is
+   never restated in the content files, so replacing an asset with one of a
+   different shape needs no edit anywhere else.
+
+   PNG and JPEG only — the two formats in this repo. Anything else, or an
+   unreadable file, falls back to 16:9 rather than breaking the build. */
+
+type Size = { width: number; height: number };
+
+const FALLBACK: Size = { width: 16, height: 9 };
+const cache = new Map<string, Size>();
+
+/* IHDR is always the first chunk: width and height sit at a fixed offset. */
+function readPng(buffer: Buffer): Size | null {
+  if (buffer.length < 24) return null;
+  if (buffer.readUInt32BE(0) !== 0x89504e47) return null;
+  return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
+}
+
+/* Walk the segment chain until a Start Of Frame marker carries the size. */
+function readJpeg(buffer: Buffer): Size | null {
+  if (buffer.length < 4 || buffer.readUInt16BE(0) !== 0xffd8) return null;
+
+  let offset = 2;
+  while (offset + 9 < buffer.length) {
+    if (buffer[offset] !== 0xff) {
+      offset += 1;
+      continue;
+    }
+    const marker = buffer[offset + 1];
+    /* SOF0–SOF15 hold the frame header. C4, C8 and CC are Huffman and
+       arithmetic coding tables that happen to share the range. */
+    const isStartOfFrame =
+      marker >= 0xc0 &&
+      marker <= 0xcf &&
+      marker !== 0xc4 &&
+      marker !== 0xc8 &&
+      marker !== 0xcc;
+
+    if (isStartOfFrame) {
+      return {
+        height: buffer.readUInt16BE(offset + 5),
+        width: buffer.readUInt16BE(offset + 7),
+      };
+    }
+    offset += 2 + buffer.readUInt16BE(offset + 2);
+  }
+  return null;
+}
+
+/* `src` is a public-relative URL, e.g. "/images/projects/x/Dashboard.png". */
+export function imageSize(src: string): Size {
+  const cached = cache.get(src);
+  if (cached) return cached;
+
+  let size = FALLBACK;
+  try {
+    const file = path.join(process.cwd(), "public", decodeURIComponent(src));
+    const buffer = readFileSync(file);
+    size = readPng(buffer) ?? readJpeg(buffer) ?? FALLBACK;
+  } catch {
+    /* Missing or unreadable — the fallback keeps the page rendering. */
+  }
+
+  cache.set(src, size);
+  return size;
+}
