@@ -21,6 +21,7 @@ import {
   DivergenceTable,
   LinkOut,
 } from "./blocks/SystemBlocks";
+import { StatusBadgeDemo } from "./blocks/StatusBadgeDemo";
 import { FigmaEmbed } from "./blocks/FigmaEmbed";
 
 export function BlockRenderer({ block }: { block: Block }) {
@@ -62,6 +63,8 @@ export function BlockRenderer({ block }: { block: Block }) {
       return <SpecList block={block} />;
     case "tokenChain":
       return <TokenChain block={block} />;
+    case "statusBadgeDemo":
+      return <StatusBadgeDemo block={block} />;
     case "codePeek":
       return <CodePeek block={block} />;
     case "divergenceTable":

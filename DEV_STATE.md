@@ -71,6 +71,32 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
   `_data/fluuen.ts` lo codifica como `tokens.published` / `tokens.alternate`,
   con la regla en el comentario de cada campo. Si alguna sesión futura "corrige"
   el Overview al número reproducible por grep, eso es el regreso.
+- **Los hex de un componente interactivo salen de `_data`, o no van**
+  (2026-08-04). `StatusBadgeDemo` es el único bloque cliente de una case study y
+  pinta con colores reales: los 5 estados del Agent badge resueltos desde
+  `tokens-source.json` (`Control.Badge.Status.Agent.<estado>-<prop>`), guardados
+  en `tokens.badgeStates`. Ningún color se escribe en el componente.
+  **Ojo con el hex de green.500: es `#3fb950`, no `#639922`.** Ese segundo valor
+  circuló en un prompt y no existe en ningún lado del sistema. La forma de la
+  cadena (`status.success → green.500`) sí era correcta.
+  Tres de los cinco estados se salen de la forma que comparten los otros dos:
+  `paused` cae en `yellow.300` en vez de un paso 500, `error` resuelve por
+  `text.error-light` en vez de `status.error` y usa alpha 10% donde el resto usa
+  20%, y `draft` no tiene semántico de status —usa surface/border/text neutros—
+  porque un borrador no tiene condición que reportar. Cada desvío está anotado en
+  su propio estado, no emparejado.
+- **Un `tokenChain` = UNA cadena, no cuatro** (2026-08-04). La primera versión
+  renderizaba 4 cadenas con paths crudos de Figma (`Components/Mode 1.🎨
+  colors.Control.…`) y era ilegible. Ahora es un diagrama de 4 cajas
+  —COMPONENT → SEMANTIC → PRIMITIVE → VALUE— con nombres en la forma legible que
+  emite el CSS, no el path del que se aplanaron. Cuatro cajas se leen como
+  argumento; cuatro cadenas se leen como volcado de datos.
+  En mobile la fila se apila y la flecha rota 90°.
+- **`cover` va fuera de `blocks`** (2026-08-04). `CaseBody` agrupa por sección y
+  **descarta todo bloque anterior al primer `section`** — una imagen "antes de la
+  00" dentro de `blocks` no renderiza nunca, en silencio. Por eso `CaseStudy`
+  tiene un campo `cover` opcional que dibuja `page.tsx` entre el hero y el body.
+  Si hace falta otro bloque pre-sección, ese es el patrón.
 - **Botón sólido = relleno accent + texto `canvas`** (2026-08-04). `CaseLinks`
   le da jerarquía a los CTAs: el primero presente en `ORDER` va sólido, el resto
   outline. Medido contra los **seis** accents, no solo violet, porque el
@@ -261,6 +287,24 @@ Countersign va **sin link a propósito**: el demo comparte estado entre visitant
 y `/scenario` no avisa que los datos son ficticios. Alguien que cae ahí sin
 contexto puede encontrarlo ya destruido por otro. Desde una case study se
 encuadra con una línea de copy; desde la home, no.
+
+### Capturas de producto en `/work/fluuen` (2026-08-04)
+
+Cuatro de las cinco PNG de `public/images/projects/fluuen/` están colocadas:
+
+| Archivo | Dónde | Por qué ahí |
+|---|---|---|
+| `Dashboard.png` | `cover`, entre hero y 00 | Ancla: prueba que existe antes del primer argumento |
+| `Workflow Builder.png` | cierre de la 02 | Rompe el muro de texto antes de la sección más densa |
+| `Agents.png` | 05 · What's true | Los estados de fallo están diseñados, no omitidos |
+| `Run Detail.png` | 06 · Live | El vocabulario `Run` del mismo badge, en su superficie |
+
+`Integrations.png` **está en la carpeta y sin colocar a propósito** — decisión
+pendiente de Facundo. No la borres.
+
+Las dimensiones salen del header del PNG vía `imageSize()` en build time; no hay
+ratio escrito en ningún content file. Los nombres con espacio van por
+`encodeURIComponent`, igual que en `design-system.ts`.
 
 ### Pendiente en `/work/fluuen`
 

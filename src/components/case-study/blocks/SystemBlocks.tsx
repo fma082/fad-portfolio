@@ -12,9 +12,13 @@ import type {
 
 /* ─── Token chain ────────────────────────────────────────────────────────── */
 
-/* Each hop is a row; the rail on the left carries the layer name, so the three
-   layers read as a descent instead of as three unrelated strings. */
+/* One chain, four boxes, read left to right. Names are the readable form, not
+   the Figma path they were flattened from — the path is what the pipeline
+   consumes, and printing it here would make the reader do the flattening.
+   Below `md` the row becomes a column and the arrow turns to point down. */
 export function TokenChain({ block }: { block: TokenChainBlock }) {
+  const last = block.steps.length - 1;
+
   return (
     <div>
       {block.title && (
@@ -23,65 +27,64 @@ export function TokenChain({ block }: { block: TokenChainBlock }) {
         </h3>
       )}
 
-      <div className="flex flex-col gap-4">
-        {block.chains.map((chain) => (
-          <div
-            key={chain.cssVar}
-            className="border border-border rounded-lg bg-card overflow-hidden"
-          >
-            <div className="px-5 lg:px-6 py-4 border-b border-border">
-              <p className="font-mono text-[11px] text-(--accent) break-all">
-                {chain.cssVar}
+      <div className="flex flex-col md:flex-row md:items-stretch gap-2 md:gap-0">
+        {block.steps.map((step, i) => (
+          <div key={step.layer} className="contents">
+            <div className="flex-1 min-w-0 border border-border rounded-lg bg-card px-4 py-4">
+              <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-fg-faint">
+                {step.layer}
               </p>
-              {chain.usedAt && (
-                <p className="font-mono text-[10px] text-fg-faint mt-1.5 break-all">
-                  {chain.usedAt}
+              <p
+                className={`font-mono text-[13px] mt-2 break-words leading-snug ${
+                  i === last ? "text-(--accent)" : "text-fg"
+                }`}
+              >
+                {step.name}
+              </p>
+              {step.detail && (
+                <p className="font-mono text-[11px] text-fg-muted mt-1 break-words leading-snug">
+                  {step.detail}
                 </p>
               )}
+              {i === last && (
+                <span
+                  aria-hidden
+                  className="block h-6 w-full mt-3 rounded ring-1 ring-inset ring-border-strong"
+                  style={{ background: step.name }}
+                />
+              )}
             </div>
-
-            <ol className="px-5 lg:px-6 py-4 flex flex-col gap-3">
-              {chain.hops.map((hop, i) => (
-                <li
-                  key={hop.path}
-                  className="grid grid-cols-1 sm:grid-cols-[6.5rem_minmax(0,1fr)] gap-x-5 gap-y-1"
-                >
-                  <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-fg-faint sm:pt-px">
-                    {/* The arrow marks a hop, so the first row does not get one. */}
-                    {i > 0 && <span aria-hidden className="mr-1.5">↳</span>}
-                    {hop.layer}
-                  </p>
-                  <div className="min-w-0">
-                    <p className="font-mono text-[11px] text-fg break-all leading-snug">
-                      {hop.path}
-                    </p>
-                    <p className="font-mono text-[11px] text-fg-muted break-all leading-snug">
-                      {hop.value}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-
-            <div className="px-5 lg:px-6 py-3 border-t border-border flex flex-wrap items-center gap-3">
-              <span
-                aria-hidden
-                className="h-5 w-5 shrink-0 rounded ring-1 ring-inset ring-border-strong"
-                style={{ background: chain.resolvesTo }}
-              />
-              <p className="font-mono text-[11px] text-fg tabular-nums">
-                {chain.resolvesTo}
-              </p>
-            </div>
-
-            {chain.note && (
-              <p className="px-5 lg:px-6 py-4 border-t border-border font-sans text-sm text-fg-muted leading-relaxed">
-                {chain.note}
-              </p>
-            )}
+            {i < last && <ChainArrow />}
           </div>
         ))}
       </div>
+
+      {block.caption && (
+        <p className="font-sans text-sm text-fg-muted leading-relaxed mt-5 max-w-3xl">
+          {block.caption}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* Rotated to point down once the boxes stack. */
+function ChainArrow() {
+  return (
+    <div className="flex items-center justify-center shrink-0 md:px-2 py-1 md:py-0">
+      <svg
+        aria-hidden
+        viewBox="0 0 24 12"
+        className="w-5 h-3 text-fg-faint rotate-90 md:rotate-0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M1 6h21" />
+        <path d="M17 1.5 22.5 6 17 10.5" />
+      </svg>
     </div>
   );
 }

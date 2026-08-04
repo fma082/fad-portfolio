@@ -130,20 +130,43 @@ export type SpecListBlock = {
   items: { label: string; value: string; note?: string }[];
 };
 
-/* One token resolved hop by hop, from the component layer down to the literal
-   it ends on. Shows the layering as a path rather than as a claim. */
+/* One token resolved across the layers, as a diagram rather than a listing.
+   Names are the readable form — "status.success", not the Figma path it was
+   flattened from. One chain per block: four boxes read as an argument, four
+   chains read as a data dump. */
 export type TokenChainBlock = {
   type: "tokenChain";
   title?: string;
-  chains: {
-    /* The CSS custom property the pipeline emits for the head of the chain. */
-    cssVar: string;
-    /* Where the product consumes it, when it does. */
-    usedAt?: string;
-    hops: { layer: string; path: string; value: string }[];
-    resolvesTo: string;
+  /* Left to right. The last step carries `value` and renders a swatch. */
+  steps: {
+    /* COMPONENT / SEMANTIC / PRIMITIVE / VALUE — printed as the box label. */
+    layer: string;
+    name: string;
+    detail?: string;
+  }[];
+  caption?: string;
+};
+
+/* Interactive status badge — the same base component under each of its states,
+   with the resolution chain for whichever one is selected. Client-side. */
+export type StatusBadgeDemoBlock = {
+  type: "statusBadgeDemo";
+  title?: string;
+  intro?: string;
+  states: {
+    id: string;
+    label: string;
+    icon: "check" | "loader" | "pause" | "x" | "file";
+    semantic: string;
+    primitive: string;
+    hex: string;
+    bg: string;
+    border: string;
     note?: string;
   }[];
+  /* The state vocabularies the same badge carries, one row each. */
+  vocabularies?: { name: string; surface: string; states: string[] }[];
+  caption?: string;
 };
 
 /* A source excerpt with its origin and the decision it encodes. `code` is
@@ -211,6 +234,7 @@ export type Block =
   | VariantMatrixBlock
   | SpecListBlock
   | TokenChainBlock
+  | StatusBadgeDemoBlock
   | CodePeekBlock
   | DivergenceTableBlock
   | LinkOutBlock
@@ -223,6 +247,10 @@ export type CaseStudy = {
   tags: string[];
   links: CaseLinks;
   stats: CaseStat[];
+  /* Full-width capture between the hero and section 00 — the anchor that shows
+     the thing exists before the first argument about it. It sits outside
+     `blocks` because CaseBody drops anything preceding the first section. */
+  cover?: CaseImage;
   blocks: Block[];
   nextCase?: { href: string; title: string; cta: string };
   /* Overrides the document title and description. Without it they fall back to

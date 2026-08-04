@@ -157,6 +157,43 @@ export interface Divergence {
   note?: string;
 }
 
+/* ── Status badge ───────────────────────────────────────────────────────── */
+
+/** Icon key. Drawn inline — this repo installs no icon library. */
+export type BadgeIcon = "check" | "loader" | "pause" | "x" | "file";
+
+/**
+ * One state of the Agent status badge, resolved through all three layers.
+ * `semantic` and `primitive` are the chain behind the label colour; `bg` and
+ * `border` are resolved the same way and are what the badge is painted with.
+ */
+export interface BadgeState {
+  id: string;
+  label: string;
+  icon: BadgeIcon;
+  semantic: string;
+  primitive: string;
+  /** Literal the label and icon resolve to. */
+  hex: string;
+  bg: string;
+  border: string;
+  /** Where the chain departs from the shape the other states share. */
+  note?: string;
+}
+
+/**
+ * The same base badge carries three state vocabularies, one per surface. Which
+ * states exist is a product decision, not a styling one — an agent pauses, a
+ * run cancels, and neither vocabulary contains the other's word.
+ */
+export interface BadgeVocabulary {
+  name: string;
+  surface: string;
+  states: string[];
+  /** Color tokens in the family. */
+  tokens: number;
+}
+
 export interface ProjectLink {
   id: "figma" | "repo" | "tokensRepo" | "demo" | "storybook";
   label: string;
@@ -260,6 +297,10 @@ export interface FluuenData {
     manualTokens: { count: number; whatFor: string[]; livesAt: string };
     layers: LayerSpec[];
     aliasChains: AliasChain[];
+    /** The Agent badge, resolved state by state. */
+    badgeStates: BadgeState[];
+    /** The three state vocabularies the same base badge carries. */
+    badgeVocabularies: BadgeVocabulary[];
     coverage: { synced: string[]; manual: string[] };
   };
   pipeline: {
@@ -509,6 +550,90 @@ const aliasChains: AliasChain[] = [
     ],
     resolvesTo: "#111116",
     note: "The one component token out of 643 that holds a literal instead of an alias. #111116 is river-styx.600 copied by hand — the layer boundary broken in a single place. Control/Toast.bg, the parallel token one namespace over, aliases surface.elevated correctly.",
+  },
+];
+
+/* ── Status badge ───────────────────────────────────────────────────────── */
+
+/**
+ * Read from tokens-source.json on 2026-08-04, resolving
+ * `Control.Badge.Status.Agent.<state>-<prop>` through both layers. Every hex
+ * below is the literal the pipeline writes; none is typed by hand.
+ */
+const badgeStates: BadgeState[] = [
+  {
+    id: "success",
+    label: "Success",
+    icon: "check",
+    semantic: "status.success",
+    primitive: "green.500",
+    hex: "#3fb950",
+    bg: "#3fb95033",
+    border: "#3fb9504d",
+  },
+  {
+    id: "running",
+    label: "Running",
+    icon: "loader",
+    semantic: "status.info",
+    primitive: "blue.500",
+    hex: "#3b82f6",
+    bg: "#3b82f633",
+    border: "#3b82f64d",
+  },
+  {
+    id: "paused",
+    label: "Paused",
+    icon: "pause",
+    semantic: "status.warning",
+    primitive: "yellow.300",
+    hex: "#e8c75c",
+    bg: "#e8c75c33",
+    border: "#e8c75c4d",
+    note: "The only state whose primitive is not a 500 step. Warning sits on yellow.300 because the 500 is too dark to read as a label on its own surface.",
+  },
+  {
+    id: "error",
+    label: "Error",
+    icon: "x",
+    semantic: "text.error-light",
+    primitive: "red.500",
+    hex: "#f85149",
+    bg: "#f851491a",
+    border: "#f8514933",
+    note: "Resolves through text.error-light rather than status.error, and its surface is a 10% alpha where the others use 20%. Both are departures from the shape the other four share.",
+  },
+  {
+    id: "draft",
+    label: "Draft",
+    icon: "file",
+    semantic: "text.muted",
+    primitive: "river-styx.150",
+    hex: "#868e9e",
+    bg: "#1a1a244d",
+    border: "#1e1e26",
+    note: "The one state with no status semantic at all — a draft agent has no condition to report, so it borrows the neutral surface, border and text the rest of the interface uses.",
+  },
+];
+
+const badgeVocabularies: BadgeVocabulary[] = [
+  {
+    name: "Agent",
+    surface: "The agents grid and the agent header",
+    states: ["success", "running", "paused", "error", "draft"],
+    tokens: 20,
+  },
+  {
+    name: "Run",
+    surface: "Run history and run detail",
+    states: ["success", "running", "failed", "cancelled"],
+    tokens: 16,
+  },
+  {
+    name: "Generic",
+    surface: "Anywhere without its own vocabulary",
+    states: ["active", "running", "error", "paused", "draft", "selected"],
+    tokens: 18,
   },
 ];
 
@@ -1102,6 +1227,8 @@ export const fluuenData: FluuenData = {
     },
     layers,
     aliasChains,
+    badgeStates,
+    badgeVocabularies,
     coverage: {
       synced: ["color", "alpha variants", "references between tokens"],
       manual: ["typography", "spacing", "radius", "shadow"],
@@ -1126,6 +1253,8 @@ export const fluuenData: FluuenData = {
   divergences,
   resolvedUnknowns,
   notes: [
+    "The status badge is the most reused pattern in the system: one base component carrying three state vocabularies — Agent (20 tokens), Run (16), Generic (18). Which states exist per surface is a product decision, not a styling one. An agent pauses and a run cancels, and neither word appears in the other's family.",
+    "Three of the five Agent states depart from the shape the other two share: paused resolves to yellow.300 rather than a 500 step, error goes through text.error-light instead of status.error and uses a 10% surface where the rest use 20%, and draft has no status semantic at all. Each departure is recorded on its own state rather than smoothed over.",
     "The Fluuen repo is read-only and was not edited for any of this. sync-tokens.mjs is written with Spanish comments and Spanish section headers; the snippets here show them in English, flagged per snippet by `commentsTranslated`. The translation is deliberate — the case study is in English and the source is not — so it is not a transcription error to correct.",
     "Each snippet is an excerpt of its line range, capped at six lines. The rule behind the cap: a decision a reader can see in six lines belongs in code, and one that needs more belongs in the paragraph under it. The first version of this file quoted whole functions and the prose underneath said the same thing better.",
     "One color scheme, one mode. The Tokens Studio file has a single 'Mode 1' per collection; the script returns null for anything under `light`, `dark` or `theme`, so a light mode could not be emitted even if it existed.",

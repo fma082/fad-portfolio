@@ -30,6 +30,12 @@ const links: CaseLinks = {
 
 const { published, alternate, drift, layers } = f.tokens;
 
+/* Product captures. Dimensions are read from the PNG header at build time by
+   ImageFrame, so the frame takes the shape of the file and no ratio is
+   restated here. Integrations.png is in the folder and deliberately unplaced. */
+const SHOT = (name: string) =>
+  `/images/projects/fluuen/${encodeURIComponent(name)}.png`;
+
 const divergenceCount = drift.cssOnly + drift.figmaOnly;
 
 /* Section 04 covers the Agent Builder sweep: entries 1-6. Entry 7 is the
@@ -63,12 +69,6 @@ const statusLabel = (d: (typeof f.divergences)[number]) =>
     ? `${STATUS_LABEL[d.status]} · high priority`
     : STATUS_LABEL[d.status];
 
-const layerLabel: Record<string, string> = {
-  primitives: "Primitive",
-  semantic: "Semantic",
-  components: "Component",
-};
-
 /* ── 00 · Overview ──────────────────────────────────────────────────────── */
 
 const overview: Block[] = [
@@ -100,18 +100,18 @@ const truth: Block[] = [
   },
   {
     type: "tokenChain",
-    title: `${layers.length} layers, resolved`,
-    chains: f.tokens.aliasChains.slice(0, 4).map((chain) => ({
-      cssVar: chain.cssVar,
-      usedAt: chain.usedAt ?? undefined,
-      hops: chain.hops.map((hop) => ({
-        layer: layerLabel[hop.layer] ?? hop.layer,
-        path: hop.path,
-        value: hop.value,
-      })),
-      resolvesTo: chain.resolvesTo,
-      note: chain.note,
-    })),
+    title: "One token, three layers",
+    /* The chain behind the label colour of a success agent badge. Read from
+       tokens-source.json; the readable names are the flattened form the CSS
+       ships, not the Figma paths they came from. */
+    steps: [
+      { layer: "Component", name: "status badge", detail: "success-text" },
+      { layer: "Semantic", name: f.tokens.badgeStates[0].semantic },
+      { layer: "Primitive", name: f.tokens.badgeStates[0].primitive },
+      { layer: "Value", name: f.tokens.badgeStates[0].hex },
+    ],
+    caption:
+      "Four boxes, one direction. The badge asks the component layer for a success label; that layer asks the semantic layer what success means; the semantic layer points at a step on a ramp. Only the last box holds a colour.",
   },
   {
     type: "prose",
@@ -184,6 +184,15 @@ const pipeline: Block[] = [
 /* ── 03 · What the pipeline didn't guarantee ────────────────────────────── */
 
 const findings: Block[] = [
+  /* Sits before the section opens, so it belongs to 02 and breaks the wall of
+     text ahead of the densest section on the page. */
+  {
+    type: "image",
+    src: SHOT("Workflow Builder"),
+    alt: "The Fluuen Agent Builder: a node canvas with a trigger, two action nodes and an AI node wired together, the node catalog on the left and the inspector open on the right",
+    caption: "Agent Builder — the screen the component layer was built for",
+    tag: "Product",
+  },
   {
     type: "section",
     num: "03",
@@ -322,6 +331,30 @@ const classified: Block[] = [
     })),
   },
   {
+    type: "statusBadgeDemo",
+    title: "The most reused pattern in the system",
+    intro:
+      "The status badge is where the layering earns its keep. Pick a state and the badge repaints — and so does the chain underneath it, which is the same four boxes from section 01 with a different middle.",
+    states: f.tokens.badgeStates.map((state) => ({
+      id: state.id,
+      label: state.label,
+      icon: state.icon,
+      semantic: state.semantic,
+      primitive: state.primitive,
+      hex: state.hex,
+      bg: state.bg,
+      border: state.border,
+      note: state.note,
+    })),
+    vocabularies: f.tokens.badgeVocabularies.map((vocabulary) => ({
+      name: vocabulary.name,
+      surface: vocabulary.surface,
+      states: vocabulary.states,
+    })),
+    caption:
+      "One base badge, three vocabularies. An agent pauses; a run cancels; neither word exists in the other's family. Which states a surface has is a product decision, and the system is what keeps that decision from turning into a colour decision as well.",
+  },
+  {
     type: "tradeoff",
     title: "One of these is filed wrong",
     body: divergence(4).note!,
@@ -339,6 +372,13 @@ const whatsTrue: Block[] = [
     body: [
       "A portfolio demo is worth less than the accuracy of its own description. Three columns, and the third one is not an apology.",
     ],
+  },
+  {
+    type: "image",
+    src: SHOT("Agents"),
+    alt: "The Fluuen agents grid: agent cards showing success, running, paused and error states side by side",
+    caption: "Agents — every state the badge vocabulary defines, including the failures",
+    tag: "Product",
   },
   {
     type: "specList",
@@ -422,6 +462,13 @@ const live: Block[] = [
     ],
   },
   {
+    type: "image",
+    src: SHOT("Run Detail"),
+    alt: "A Fluuen run detail view: a timeline of executed steps, each with its status, duration and logged output",
+    caption: "Run detail — the run vocabulary of the same badge, on its own surface",
+    tag: "Product",
+  },
+  {
     type: "figmaEmbed",
     url: link("figma")!,
     caption: `${f.source.figmaFileName} — ${published.total} colour variables across ${layers.length} collections`,
@@ -445,6 +492,12 @@ export const fluuen: CaseStudy = {
   },
   tags: ["Design system", "Design tokens", "AI agents", "B2B SaaS"],
   links,
+  cover: {
+    src: SHOT("Dashboard"),
+    alt: "The Fluuen dashboard: metric cards, a runs chart, agent status list and recent run history, on the dark River Styx surface",
+    caption: "Dashboard — the system in production",
+    tag: "Product",
+  },
   stats: [
     { value: String(published.total), label: "Color tokens" },
     { value: String(layers.length), label: "Token layers" },
