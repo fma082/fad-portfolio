@@ -52,7 +52,10 @@ export default async function CaseStudyPage({ params }: Params) {
       </CaseHero>
 
       {cover && (
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-12 pb-16 lg:pb-20">
+        /* Same vertical step a CaseBody section uses, top and bottom, so the
+           cover reads as its own band rather than as something stuck to the
+           hero's bottom border. */
+        <div className="max-w-screen-xl mx-auto px-6 lg:px-12 pt-14 lg:pt-16 pb-16 lg:pb-20">
           <ImageFrame {...cover} sizes="(max-width: 768px) 100vw, 1280px" />
         </div>
       )}
