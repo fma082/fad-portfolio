@@ -114,13 +114,10 @@ const projects: Project[] = [
     type: "Personal product · Design system + AI product · 2026",
     desc: "A three-layer token architecture synced from Figma to code by a custom pipeline — and the AI agent product built on top of it to test whether the system held.",
     accent: "violet",
-    /* The Storybook is the argument: tokens parsed from the production build,
-       so the documentation cannot drift. The product demo is secondary to it. */
-    link: {
-      kind: "external",
-      href: "https://fluuen-storybook.vercel.app/",
-      label: "View the system ↗",
-    },
+    /* Pointed at the Storybook until the case study existed. The case study now
+       links all four artefacts — Figma, token repo, demo, Storybook — and frames
+       them, which the bare Storybook link could not do. */
+    link: { kind: "case", slug: "fluuen" },
   },
   {
     title: "Countersign",
@@ -154,10 +151,6 @@ const toolGroups: ToolGroup[] = [
   {
     label: "Process",
     tools: ["Design QA", "Jira", "Confluence", "Agile/Scrum"],
-  },
-  {
-    label: "Code",
-    tools: ["Next.js", "Tailwind CSS", "shadcn/ui", "TypeScript"],
   },
   {
     label: "AI",
