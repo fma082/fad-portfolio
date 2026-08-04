@@ -16,12 +16,15 @@ import { fluuenData as f } from "./_data/fluuen";
 const link = (id: (typeof f.links)[number]["id"]) =>
   f.links.find((l) => l.id === id && l.linked)?.href;
 
-/* The product repo is private, so it has `linked: false` and resolves to
-   undefined here — CaseLinks renders nothing for a missing key. */
+/* Three in the hero: `live` comes first and gets the solid treatment.
+   The token repo is deliberately not here — it is the least actionable of the
+   four for a visitor, and a fourth button dilutes the other three. It is linked
+   inside section 02 instead, next to the pipeline it is the source for.
+   The product repo is private, so it has `linked: false` in the data file and
+   resolves to undefined — CaseLinks renders nothing for a missing key. */
 const links: CaseLinks = {
-  figma: link("figma"),
-  tokens: link("tokensRepo"),
   live: link("demo"),
+  figma: link("figma"),
   storybook: link("storybook"),
 };
 
@@ -158,6 +161,12 @@ const pipeline: Block[] = [
       decision: snippet.decision,
     }),
   ),
+  {
+    type: "linkOut",
+    href: f.links.find((l) => l.id === "tokensRepo")!.href,
+    label: "Token repo",
+    body: "The repository the script fetches from is public. It is the one artefact that makes the pipeline inspectable rather than described — the same JSON the generator reads, at the commit it last read.",
+  },
   {
     type: "decision",
     title: "Custom script over Style Dictionary",

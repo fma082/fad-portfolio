@@ -71,6 +71,27 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
   `_data/fluuen.ts` lo codifica como `tokens.published` / `tokens.alternate`,
   con la regla en el comentario de cada campo. Si alguna sesión futura "corrige"
   el Overview al número reproducible por grep, eso es el regreso.
+- **Botón sólido = relleno accent + texto `canvas`** (2026-08-04). `CaseLinks`
+  le da jerarquía a los CTAs: el primero presente en `ORDER` va sólido, el resto
+  outline. Medido contra los **seis** accents, no solo violet, porque el
+  componente es compartido:
+
+  | | borde sobre canvas | `canvas` sobre relleno | `#FFF` sobre relleno |
+  |---|---|---|---|
+  | peor caso | 4.76:1 (blue) | 4.76:1 (blue) | 4.16:1 (blue) |
+  | mínimo AA | 3:1 ✅ | 4.5:1 ✅ | 4.5:1 ❌ |
+
+  **El texto blanco falla en los seis.** Es la elección instintiva y es la
+  incorrecta: los accents son claros sobre un canvas casi negro, así que el
+  contraste lo da el texto oscuro. Si aparece un botón sólido nuevo, `text-canvas`,
+  no `text-fg` (2.88:1 sobre violet) ni blanco.
+  El borde accent a fuerza completa pasa 3:1 con margen — no hace falta aclararlo
+  ni engrosarlo. Ojo: bajarlo a `/40` o `/50` reduce el contraste y lo puede tirar
+  abajo del mínimo.
+- **Un link inline es un bloque, no un parser** (2026-08-04). `Prose` no parsea
+  markdown y esa decisión no se reabre. Cuando la 02 de Fluuen necesitó linkear
+  el repo de tokens en contexto, salió `linkOut` — href + label + una línea de
+  body. Misma regla que ya estaba escrita para inline code.
 - **Los `codePeek` se topean en 6 líneas** (2026-08-04). Un snippet que necesita
   más para entenderse es un argumento, y un argumento va en prosa. Los tres de
   Fluuen quedaron en 6/5/5 y son **extractos** de su rango: `lines` es más ancho
@@ -230,8 +251,12 @@ La card sin link pierde el `hover:-translate-y-0.5` y el CTA va en `text-fg-fain
 ~~Fluuen linkea al **Storybook**~~ — desde el 2026-08-04 la card apunta a
 `/work/fluuen` (`{ kind: "case", slug: "fluuen" }`). El link pelado al Storybook
 era el mejor destino mientras no hubiera case study; ahora la case study linkea
-los cuatro artefactos (Figma, repo de tokens, demo, Storybook) y además los
-encuadra, que es lo que el link solo no podía hacer.
+los artefactos y además los encuadra, que es lo que el link solo no podía hacer.
+
+**El hero de Fluuen lleva tres CTAs, no cuatro**: Live demo (sólido) · Figma
+file · Storybook. El repo de tokens salió del hero — es el menos accionable para
+un visitante y un cuarto botón diluye los otros tres. Vive en la sección 02 como
+`linkOut`, al lado del pipeline del que es la fuente.
 Countersign va **sin link a propósito**: el demo comparte estado entre visitantes
 y `/scenario` no avisa que los datos son ficticios. Alguien que cae ahí sin
 contexto puede encontrarlo ya destruido por otro. Desde una case study se

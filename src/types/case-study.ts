@@ -177,6 +177,16 @@ export type DivergenceTableBlock = {
   }[];
 };
 
+/* A single outbound link, with the line of context that earns it. Prose does
+   not parse markdown, so an inline link is a block rather than a syntax — same
+   rule as inline code: a new block, never a parser. */
+export type LinkOutBlock = {
+  type: "linkOut";
+  href: string;
+  label: string;
+  body?: string;
+};
+
 /* Live Figma embed. Mounted only once it enters the viewport. */
 export type FigmaEmbedBlock = {
   type: "figmaEmbed";
@@ -203,6 +213,7 @@ export type Block =
   | TokenChainBlock
   | CodePeekBlock
   | DivergenceTableBlock
+  | LinkOutBlock
   | FigmaEmbedBlock;
 
 /* ─── Case study ─────────────────────────────────────────────────────────── */

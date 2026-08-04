@@ -2,6 +2,7 @@ import type {
   TokenChainBlock,
   CodePeekBlock,
   DivergenceTableBlock,
+  LinkOutBlock,
 } from "@/types/case-study";
 
 /* Blocks for a case study about a system rather than a surface: an alias chain
@@ -194,6 +195,32 @@ function Side({
           {at}
         </p>
       )}
+    </div>
+  );
+}
+
+/* ─── Link out ───────────────────────────────────────────────────────────── */
+
+/* An artefact linked where it is being discussed, rather than in the hero. The
+   border is the accent at full strength — measured at 4.76:1 against canvas on
+   the weakest accent in the set, against a 3:1 minimum for non-text UI. */
+export function LinkOut({ block }: { block: LinkOutBlock }) {
+  return (
+    <div className="max-w-3xl">
+      {block.body && (
+        <p className="font-sans text-base text-fg-muted leading-relaxed mb-5">
+          {block.body}
+        </p>
+      )}
+      <a
+        href={block.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 px-5 py-2.5 border border-(--accent) text-(--accent) hover:bg-(--accent)/10 font-mono text-xs tracking-widest uppercase transition-colors duration-200"
+      >
+        {block.label}
+        <span aria-hidden>↗</span>
+      </a>
     </div>
   );
 }

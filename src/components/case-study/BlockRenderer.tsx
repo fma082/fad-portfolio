@@ -19,6 +19,7 @@ import {
   TokenChain,
   CodePeek,
   DivergenceTable,
+  LinkOut,
 } from "./blocks/SystemBlocks";
 import { FigmaEmbed } from "./blocks/FigmaEmbed";
 
@@ -65,6 +66,8 @@ export function BlockRenderer({ block }: { block: Block }) {
       return <CodePeek block={block} />;
     case "divergenceTable":
       return <DivergenceTable block={block} />;
+    case "linkOut":
+      return <LinkOut block={block} />;
     case "figmaEmbed":
       return <FigmaEmbed block={block} />;
     default: {
