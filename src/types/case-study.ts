@@ -20,7 +20,11 @@ export type CaseMeta = {
 export type CaseLinks = {
   figma?: string;
   github?: string;
+  /* The repository a design system is generated from, when that is a different
+     artefact from the product repo. Labelled distinctly for that reason. */
+  tokens?: string;
   live?: string;
+  storybook?: string;
   behance?: string;
 };
 
@@ -126,6 +130,53 @@ export type SpecListBlock = {
   items: { label: string; value: string; note?: string }[];
 };
 
+/* One token resolved hop by hop, from the component layer down to the literal
+   it ends on. Shows the layering as a path rather than as a claim. */
+export type TokenChainBlock = {
+  type: "tokenChain";
+  title?: string;
+  chains: {
+    /* The CSS custom property the pipeline emits for the head of the chain. */
+    cssVar: string;
+    /* Where the product consumes it, when it does. */
+    usedAt?: string;
+    hops: { layer: string; path: string; value: string }[];
+    resolvesTo: string;
+    note?: string;
+  }[];
+};
+
+/* A source excerpt with its origin and the decision it encodes. `code` is
+   printed verbatim, so keep the original indentation and comments. */
+export type CodePeekBlock = {
+  type: "codePeek";
+  file: string;
+  /* Line range in the source, e.g. "181-194". */
+  lines: string;
+  title: string;
+  code: string;
+  decision?: string;
+};
+
+/* Figma ↔ code divergences. Both sides are shown; neither is the correction of
+   the other until a row says so. */
+export type DivergenceTableBlock = {
+  type: "divergenceTable";
+  summary?: string;
+  rows: {
+    item: string;
+    code: string;
+    codeAt?: string;
+    figma: string;
+    figmaAt?: string;
+    /* Short kind label: "Mechanical sync", "Product decision", "Figma-ahead". */
+    category: string;
+    /* "Permanent" or "Debt", optionally qualified. */
+    status: string;
+    note?: string;
+  }[];
+};
+
 /* Live Figma embed. Mounted only once it enters the viewport. */
 export type FigmaEmbedBlock = {
   type: "figmaEmbed";
@@ -149,6 +200,9 @@ export type Block =
   | ComponentInventoryBlock
   | VariantMatrixBlock
   | SpecListBlock
+  | TokenChainBlock
+  | CodePeekBlock
+  | DivergenceTableBlock
   | FigmaEmbedBlock;
 
 /* ─── Case study ─────────────────────────────────────────────────────────── */

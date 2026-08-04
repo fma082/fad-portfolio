@@ -3,7 +3,7 @@
 Estado vivo del proyecto. Claude Code: leé esto al empezar cada sesión.
 Actualizalo al cerrar una fase o después de una decisión de arquitectura.
 
-Última actualización: 2026-08-03
+Última actualización: 2026-08-04
 
 ---
 
@@ -59,6 +59,27 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
   - Al revés: sacar un caso del array de `index.ts` **alcanza** para que su ruta
     desaparezca, porque el slug sale de `generateStaticParams`. Así se retiró
     `/work/deftboard` — no había ruta estática que borrar.
+- **Un artefacto publica el número de su fuente declarada, no el del derivado**
+  (2026-08-04). Fluuen tiene dos conteos de tokens del mismo sistema: **848**
+  variables COLOR en Figma y **897** custom properties en el `globals.css`
+  generado. El Overview publica **848 solo**; el 897 aparece **una vez**, en la
+  sección 03, al lado del drift, donde la distancia entre los dos *es* el
+  hallazgo. La razón no es de rigor sino de tesis: la case study argumenta que
+  cada artefacto declara dónde vive su verdad, y para tokens declaró Figma.
+  Publicar el número del derivado se contradice en el propio titular — y el 897
+  incluye 85 nombres que Figma ya no tiene.
+  `_data/fluuen.ts` lo codifica como `tokens.published` / `tokens.alternate`,
+  con la regla en el comentario de cada campo. Si alguna sesión futura "corrige"
+  el Overview al número reproducible por grep, eso es el regreso.
+- **Los `codePeek` se topean en 6 líneas** (2026-08-04). Un snippet que necesita
+  más para entenderse es un argumento, y un argumento va en prosa. Los tres de
+  Fluuen quedaron en 6/5/5 y son **extractos** de su rango: `lines` es más ancho
+  que el código mostrado, a propósito. La primera versión citaba funciones
+  enteras y el párrafo de abajo decía lo mismo mejor.
+  Ojo: `scripts/sync-tokens.mjs` tiene los comentarios **en español**. Los
+  snippets los muestran traducidos, marcado por snippet con
+  `commentsTranslated`. **No es un error de transcripción** — el repo de Fluuen
+  es de solo lectura y no se tocó.
 - **Datos de Figma como data extraída, no como capturas** (2026-08-03).
   `src/content/case-studies/_data/design-system.ts` tiene el volcado tipado del
   archivo de Figma (10 rampas, 73 text styles, 49 component sets, 817 variants,
@@ -102,7 +123,10 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
 - [x] Cerrar el solapamiento `deftboard` / `design-system` (2026-08-03).
 - [x] Extraer Navbar / Footer de `page.tsx` a `src/components/layout/` (2026-08-03).
 - [x] Actualizar las cards de la home a los 3 proyectos reales (2026-08-03).
-- [ ] Case study: Fluuen.
+- [x] Case study: Fluuen (`/work/fluuen`) — 2026-08-04. Quedan dos
+      `TODO: copy needed` (ver abajo).
+- [x] Bloques de sistema (2026-08-04): `tokenChain`, `codePeek`,
+      `divergenceTable`. `CodePeek` estaba en la lista de pendientes de arriba.
 - [ ] Case study: Countersign.
 
 ---
@@ -130,11 +154,18 @@ Claude Code no puede inventar esto. Si falta, dejar `{/* TODO: copy needed */}`.
 
 | Proyecto      | Brief escrito | Figma | Repo | Demo |
 | ------------- | ------------- | ----- | ---- | ---- |
-| Fluuen        | ❌            | ✅    | ✅   | ✅   |
+| Fluuen        | ✅            | ✅    | 🔒   | ✅   |
 | Countersign   | ❌            | —     | ✅   | ✅   |
 | Design System | ❌            | ✅    | —    | —    |
 
 Los briefs van en `docs/briefs/[proyecto].md`.
+
+🔒 **El repo del producto de Fluuen (`fma082/fluuen`) es privado** — confirmado
+2026-08-04, la API de GitHub devuelve 404 sin credenciales. La case study no lo
+linkea. Lo que sí es público y sí se linkea es `fma082/fluuen-tokens`, la fuente
+del pipeline. Por eso `CaseLinks` tiene una key `tokens` aparte de `github`: el
+botón decía "Repository" apuntando al repo de tokens, y eso se lee como el repo
+del producto en una case study que declara que ese repo es privado.
 
 ### Fork cerrado: `deftboard` → `design-system` (2026-08-03)
 
@@ -196,13 +227,37 @@ placeholder. Y crear una ruta estática para taparlo es el anti-pattern de arrib
 La card sin link pierde el `hover:-translate-y-0.5` y el CTA va en `text-fg-faint`
 — sin afordancia de click no hay frustración.
 
-Fluuen linkea al **Storybook**, no al demo: los tokens salen parseados del build
-de producción, así que la documentación no puede driftear. Esa es la tesis del
-proyecto; el producto es secundario a ella.
+~~Fluuen linkea al **Storybook**~~ — desde el 2026-08-04 la card apunta a
+`/work/fluuen` (`{ kind: "case", slug: "fluuen" }`). El link pelado al Storybook
+era el mejor destino mientras no hubiera case study; ahora la case study linkea
+los cuatro artefactos (Figma, repo de tokens, demo, Storybook) y además los
+encuadra, que es lo que el link solo no podía hacer.
 Countersign va **sin link a propósito**: el demo comparte estado entre visitantes
 y `/scenario` no avisa que los datos son ficticios. Alguien que cae ahí sin
 contexto puede encontrarlo ya destruido por otro. Desde una case study se
 encuadra con una línea de copy; desde la home, no.
+
+### Pendiente en `/work/fluuen`
+
+Dos `TODO: copy needed`, los dos de argumento, no de dato:
+
+- **01 · Where truth lives** — por qué el borde "las pantallas viven solo en
+  código" es decisión de sistema y no excusa por no haberlas dibujado. El hecho
+  y la fecha están en `_data` (divergencia 8).
+- **03 · What the pipeline didn't guarantee** — el cierre de la sección. Todo lo
+  de arriba es el hallazgo; falta de qué es evidencia. Facundo lo escribe.
+
+**El stat "49 component sets" del brief original no existe para Fluuen** — 49 es
+`componentSets.length` del Design System, se arrastró de esa case study. No hay
+conteo verificado de component sets de Fluuen en ningún lado. La barra quedó
+`848 color tokens · 3 layers · 121 divergences · 6 pipeline steps`, todo derivado
+de `_data`. Si aparece un conteo real, ese es el lugar donde entra.
+
+**Nada del `CLAUDE.md` de mayo de Fluuen entró** — ni Zustand por dominio, ni
+`runAgent.ts`, ni banner de demo mode, ni reset, ni onboarding, ni mobile
+fallback. Ese documento se escribió antes de que existiera el producto y nunca
+se reconcilió. La columna de deuda abierta de la sección 05 son las cuatro cosas
+verificadas, no la lista de features que no se construyeron.
 
 ### Pendiente en `/work/design-system`
 

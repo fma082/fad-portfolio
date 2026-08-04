@@ -60,7 +60,11 @@ with wide tracking (`tracking-[0.2em]`), size 10–12px.
 
 ## Projects (current, canonical list)
 
-1. Fluuen — Figma + repo + live demo. Featured. Accent: violet.
+1. Fluuen — Figma + token repo + live demo + Storybook. Featured. Accent: violet.
+   El repo del **producto** (`fma082/fluuen`) es **privado** — confirmado 2026-08-04.
+   No lo linkees. Lo que sí es público es `fma082/fluuen-tokens`, la fuente del
+   pipeline. Las referencias a archivos del producto en `_data/fluuen.ts` son
+   procedencia, no links.
 2. Countersign — repo + live demo. Accent: teal.
 3. Design System — Figma only. Accent: blue.
 

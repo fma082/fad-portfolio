@@ -3,11 +3,13 @@ import type { CaseLinks as CaseLinksType } from "@/types/case-study";
 const LABELS: Record<keyof CaseLinksType, string> = {
   figma: "Figma file",
   github: "Repository",
+  tokens: "Token repo",
   live: "Live demo",
+  storybook: "Storybook",
   behance: "Behance",
 };
 
-const ORDER = ["live", "figma", "github", "behance"] as const;
+const ORDER = ["live", "figma", "tokens", "storybook", "github", "behance"] as const;
 
 /* Renders nothing when a case study has no links, so a case with an empty
    `links` object is visually unchanged. */

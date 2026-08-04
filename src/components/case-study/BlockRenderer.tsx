@@ -15,6 +15,11 @@ import {
   VariantMatrix,
   SpecList,
 } from "./blocks/SpecBlocks";
+import {
+  TokenChain,
+  CodePeek,
+  DivergenceTable,
+} from "./blocks/SystemBlocks";
 import { FigmaEmbed } from "./blocks/FigmaEmbed";
 
 export function BlockRenderer({ block }: { block: Block }) {
@@ -54,6 +59,12 @@ export function BlockRenderer({ block }: { block: Block }) {
       return <VariantMatrix block={block} />;
     case "specList":
       return <SpecList block={block} />;
+    case "tokenChain":
+      return <TokenChain block={block} />;
+    case "codePeek":
+      return <CodePeek block={block} />;
+    case "divergenceTable":
+      return <DivergenceTable block={block} />;
     case "figmaEmbed":
       return <FigmaEmbed block={block} />;
     default: {
