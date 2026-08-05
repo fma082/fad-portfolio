@@ -6,6 +6,7 @@ import { CaseLinks } from "@/components/case-study/CaseLinks";
 import { CaseBody } from "@/components/case-study/CaseBody";
 import { ImageFrame } from "@/components/case-study/ImageFrame";
 import { StickyCta } from "@/components/case-study/StickyCta";
+import { Cta } from "@/components/case-study/blocks/SystemBlocks";
 import { CaseFooter } from "@/components/case-study/CaseFooter";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -32,7 +33,7 @@ export default async function CaseStudyPage({ params }: Params) {
   const study = getCaseStudy(slug);
   if (!study) notFound();
 
-  const { meta, tags, links, stats, cover, stickyCta, blocks, nextCase } =
+  const { meta, tags, links, stats, cover, coverCta, stickyCta, blocks, nextCase } =
     study;
 
   return (
@@ -59,6 +60,11 @@ export default async function CaseStudyPage({ params }: Params) {
            hero's bottom border. */
         <div className="max-w-screen-xl mx-auto px-6 lg:px-12 pt-14 lg:pt-16 pb-16 lg:pb-20">
           <ImageFrame {...cover} sizes="(max-width: 768px) 100vw, 1280px" />
+          {coverCta && (
+            <div className="mt-8">
+              <Cta block={{ type: "cta", ...coverCta }} />
+            </div>
+          )}
         </div>
       )}
 

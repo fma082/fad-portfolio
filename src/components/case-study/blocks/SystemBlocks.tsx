@@ -131,8 +131,9 @@ export function CodePeek({ block }: { block: CodePeekBlock }) {
 
 /* ─── Divergence table ───────────────────────────────────────────────────── */
 
-/* Two values per row, side by side, neither presented as the correct one. The
-   category and status carry the judgement instead. */
+/* Both sides side by side, neither presented as the correction of the other.
+   The pill carries the judgement; the file location carries the evidence. No
+   prose per row — the section's own paragraph does that work. */
 export function DivergenceTable({ block }: { block: DivergenceTableBlock }) {
   return (
     <div>
@@ -146,30 +147,18 @@ export function DivergenceTable({ block }: { block: DivergenceTableBlock }) {
         {block.rows.map((row, i) => (
           <div
             key={`${row.item}-${i}`}
-            className={`py-5 ${i === 0 ? "" : "border-t border-border"}`}
+            className={`grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_auto] gap-x-6 gap-y-3 py-5 items-start ${
+              i === 0 ? "" : "border-t border-border"
+            }`}
           >
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-x-8 gap-y-4">
-              <p className="font-mono text-xs text-fg break-words lg:pt-px">
-                {row.item}
-              </p>
-              <Side label="In code" value={row.code} at={row.codeAt} />
-              <Side label="In Figma" value={row.figma} at={row.figmaAt} />
-            </div>
-
-            <div className="flex flex-wrap gap-1.5 mt-4">
-              <span className="font-mono text-[10px] px-2 py-0.5 border border-border text-fg-muted">
-                {row.category}
-              </span>
-              <span className="font-mono text-[10px] px-2 py-0.5 border border-(--accent)/40 text-(--accent)">
-                {row.status}
-              </span>
-            </div>
-
-            {row.note && (
-              <p className="font-sans text-sm text-fg-muted leading-relaxed mt-3 max-w-3xl">
-                {row.note}
-              </p>
-            )}
+            <p className="font-mono text-xs text-fg break-words lg:pt-px">
+              {row.item}
+            </p>
+            <Side value={row.code} at={row.codeAt} swatch={row.codeSwatch} />
+            <Side value={row.figma} at={row.figmaAt} swatch={row.figmaSwatch} />
+            <span className="font-mono text-[10px] tracking-[0.05em] uppercase px-2 py-1 rounded bg-(--accent)/10 text-(--accent) justify-self-start lg:justify-self-end whitespace-nowrap">
+              {row.pill}
+            </span>
           </div>
         ))}
       </div>
@@ -178,20 +167,24 @@ export function DivergenceTable({ block }: { block: DivergenceTableBlock }) {
 }
 
 function Side({
-  label,
   value,
   at,
+  swatch,
 }: {
-  label: string;
   value: string;
   at?: string;
+  swatch?: string;
 }) {
   return (
     <div className="min-w-0">
-      <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-fg-faint mb-1.5">
-        {label}
-      </p>
-      <p className="font-mono text-[11px] text-fg-muted break-words leading-snug">
+      <p className="flex items-center gap-2 font-mono text-[11px] text-fg-muted break-words leading-snug">
+        {swatch && (
+          <span
+            aria-hidden
+            className="h-3.5 w-3.5 shrink-0 rounded-sm ring-1 ring-inset ring-border-strong"
+            style={{ background: swatch }}
+          />
+        )}
         {value}
       </p>
       {at && (
@@ -231,21 +224,24 @@ export function LinkOut({ block }: { block: LinkOutBlock }) {
 
 /* ─── Inline CTA ─────────────────────────────────────────────────────────── */
 
-/* Deliberately not a button. It sits inside the reading column right after the
-   evidence that earns it, so it reads as the next sentence rather than as an
-   advertisement interrupting one. */
+/* A tinted panel, not a sentence: it interrupts the reading column on purpose,
+   placed right after the evidence that earns it. The button carries dark text
+   on the accent fill — white fails 4.5:1 on every accent in the set, these
+   being light hues on a near-black canvas. */
 export function Cta({ block }: { block: CtaBlock }) {
   return (
-    <p className="max-w-3xl font-sans text-base text-fg-muted leading-relaxed">
-      {block.body}{" "}
+    <div className="max-w-3xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-xl border border-(--accent)/20 bg-(--accent)/[0.06] px-6 py-5">
+      <p className="font-sans text-[15px] text-fg leading-relaxed text-center sm:text-left">
+        {block.body}
+      </p>
       <a
         href={block.href}
         target="_blank"
         rel="noopener noreferrer"
-        className="font-mono text-sm tracking-wide text-(--accent) underline decoration-(--accent)/30 underline-offset-4 hover:decoration-(--accent) transition-colors duration-200 whitespace-nowrap"
+        className="shrink-0 inline-flex items-center justify-center rounded-md bg-(--accent) text-canvas font-mono text-xs tracking-[0.08em] px-5 py-2.5 hover:opacity-90 transition-opacity duration-200 whitespace-nowrap"
       >
         {block.label}
       </a>
-    </p>
+    </div>
   );
 }

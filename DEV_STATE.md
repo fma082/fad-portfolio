@@ -71,6 +71,36 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
   `_data/fluuen.ts` lo codifica como `tokens.published` / `tokens.alternate`,
   con la regla en el comentario de cada campo. Si alguna sesión futura "corrige"
   el Overview al número reproducible por grep, eso es el regreso.
+- **La case study de Fluuen converge al prototipo aprobado** (2026-08-05).
+  `docs/briefs/fluuen-case-study-prototype.html` es la referencia visual; el
+  diff completo quedó en `docs/briefs/fluuen-proto-diff.md`. Lo que cambió al
+  converger, y por qué importa como regla general:
+  - **Prosa sobre bloques.** Las secciones 02 y 03 pasaron de 6 y 12 elementos
+    a 3 cada una. `specList` de pasos del pipeline, `decision` y `tradeoff` de
+    la 02, `metrics` de 4 números, `decision` del Inspector y `specList` de
+    fechas de la 03: todo eso volvió a ser párrafo. Un bloque estructurado que
+    dice lo mismo que el párrafo de al lado es peso, no rigor.
+  - **Orden.** 04 = nodo → tabla. 06 = embed → imagen. Estaban invertidos.
+  - **La imagen de la 05 va al final**, después del párrafo de encuadre, no
+    después del intro.
+  - `Prose` **no parsea markdown** y eso no se reabrió: el prototipo pone
+    Done/Partial/Debt en negrita inline y acá van en texto plano, sostenidos
+    por la posición. Si alguna vez hace falta negrita inline es un bloque
+    nuevo, no un parser.
+- **El token de la 01 es Generic/Active, no Agent/success** (2026-08-05).
+  El badge que renderiza el producto dice `label: 'Active'`
+  (`components/agents/agent-card.tsx:12`), así que la familia que corresponde es
+  **Generic**, cuyo estado se llama `Active`. La familia **Agent** llama
+  `success` al estado equivalente. Las dos resuelven al mismo literal, así que
+  elegir por hex habría dado una cadena cuyo nombre de estado contradice la
+  etiqueta en pantalla.
+  Cadena real: `Control/Badge/Status/Generic/Active/Label` → **`icon.success`**
+  → `green.500` → `#3fb950`.
+  **Dos correcciones sobre lo que circulaba:** no es `success-bg` —el `bg` del
+  mismo estado es alpha 20% (`#3fb95033`), así que una cadena encabezada "bg"
+  que termina en `#3fb950` no resuelve—; y el semántico **no es
+  `status.success`** sino `icon.success`, un token de texto ruteado por el
+  namespace de íconos. Guardado en `tokens.openingChain` con su nota.
 - **El componente interactivo de la case study es el NODO, no el badge**
   (2026-08-05). `StatusBadgeDemo` se borró y lo reemplazó `NodeDemo`: las tres
   variantes del component set `Node` del Agent Builder, leídas de Figma vía MCP
@@ -306,6 +336,22 @@ contexto puede encontrarlo ya destruido por otro. Desde una case study se
 encuadra con una línea de copy; desde la home, no.
 
 ### Capa de conversión en `/work/fluuen` (2026-08-05)
+
+Decisiones cerradas sobre los CTAs, ya aplicadas:
+
+- Los inline son **caja tintada** (fondo accent 6%, borde accent 20%, radio 12)
+  con **botón sólido**, no links subrayados. Interrumpen la columna de lectura a
+  propósito, justo después de la evidencia que los gana.
+- El sticky **no es cerrable**. Es el CTA principal y un CTA que el lector puede
+  borrar deja de convertir apenas molesta un poco.
+- El sticky **sí espera el scroll** (~600px): antes de eso el botón "Live demo"
+  del hero está en pantalla y una segunda copia del mismo link es ruido.
+- El botón sólido lleva `text-canvas`. Blanco falla 4.5:1 contra los seis
+  accents (ver la entrada de contraste más arriba).
+- La compensación de layout vive en `globals.css` como
+  `body:has([data-sticky-cta]) { padding-bottom: 3.5rem }` — una página sin
+  barra no paga nada.
+
 
 Tres CTAs al demo, todos derivando el href de `links` en `_data`:
 

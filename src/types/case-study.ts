@@ -210,13 +210,13 @@ export type DivergenceTableBlock = {
     item: string;
     code: string;
     codeAt?: string;
+    /* Colour for the swatch beside the value, when the value is a colour. */
+    codeSwatch?: string;
     figma: string;
     figmaAt?: string;
-    /* Short kind label: "Mechanical sync", "Product decision", "Figma-ahead". */
-    category: string;
-    /* "Permanent" or "Debt", optionally qualified. */
-    status: string;
-    note?: string;
+    figmaSwatch?: string;
+    /* One word for how the row is classified: debt, affordance, by design. */
+    pill: string;
   }[];
 };
 
@@ -272,6 +272,9 @@ export type CaseStudy = {
      the thing exists before the first argument about it. It sits outside
      `blocks` because CaseBody drops anything preceding the first section. */
   cover?: CaseImage;
+  /* Call to action between the cover and the first section. Outside `blocks`
+     for the same reason `cover` is: CaseBody drops anything before section 00. */
+  coverCta?: { body: string; label: string; href: string };
   /* Fixed bar at the bottom of the viewport for the whole scroll. Outside
      `blocks` because it is page chrome, not a step in the argument. */
   stickyCta?: { label: string; cta: string; href: string };

@@ -197,6 +197,22 @@ export interface BadgeVocabulary {
 /* ── Agent Builder node ─────────────────────────────────────────────────── */
 
 /**
+ * The chain the case study opens with: one component token resolved to a
+ * literal. `component` and `componentDetail` are the readable form; `token` is
+ * the full path, kept for provenance and never rendered.
+ */
+export interface OpeningChain {
+  component: string;
+  componentDetail: string;
+  token: string;
+  semantic: string;
+  primitive: string;
+  hex: string;
+  family: string;
+  note: string;
+}
+
+/**
  * One state of the `Node` component set in the Agent Builder library.
  *
  * Read from Figma on 2026-08-05 through the MCP, read-only:
@@ -341,6 +357,8 @@ export interface FluuenData {
     aliasChains: AliasChain[];
     /** The Agent badge, resolved state by state. */
     badgeStates: BadgeState[];
+    /** The chain section 01 opens with. */
+    openingChain: OpeningChain;
     /** The Agent Builder node: three variants, three border tokens. */
     nodeStates: NodeState[];
     /** What the node is painted with, shared across all three variants. */
@@ -684,6 +702,34 @@ const badgeVocabularies: BadgeVocabulary[] = [
 ];
 
 /* ── Agent Builder node ─────────────────────────────────────────────────── */
+
+/**
+ * Verified 2026-08-05.
+ *
+ * Which family: the badge the product renders on the agents grid reads
+ * "Active" (`components/agents/agent-card.tsx:12`), so the matching vocabulary
+ * is Generic, whose state is called Active — not Agent, whose equivalent state
+ * is called success. Both families resolve to the same literal, so picking by
+ * hex alone would have produced a chain whose state name contradicts the label
+ * on screen.
+ *
+ * Which property: #3fb950 is bound to the Label, the text. The bg of the same
+ * state is a 20% alpha (#3fb95033), so a chain headed "bg" that ends in
+ * #3fb950 does not resolve.
+ *
+ * The semantic step is `icon.success`, not `status.success` — a text token
+ * aliasing the icon namespace. Recorded as read; see `note`.
+ */
+const openingChain: OpeningChain = {
+  component: "status badge",
+  componentDetail: "Active · label",
+  token: "Control/Badge/Status/Generic/Active/Label",
+  semantic: "icon.success",
+  primitive: "green.500",
+  hex: "#3fb950",
+  family: "Generic",
+  note: "The label reaches for icon.success rather than status.success — a text token routed through the icon namespace. Both land on the same ramp step, so nothing renders wrong, but the two properties of one badge take different semantic paths to get there.",
+};
 
 const nodeStates: NodeState[] = [
   {
@@ -1316,6 +1362,7 @@ export const fluuenData: FluuenData = {
     layers,
     aliasChains,
     badgeStates,
+    openingChain,
     nodeStates,
     nodeStructure,
     badgeVocabularies,

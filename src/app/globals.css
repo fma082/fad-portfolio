@@ -50,6 +50,13 @@
    `var(--color-*)` strings in TS) is also what keeps these tokens in the build:
    Tailwind v4 drops any @theme variable it cannot see referenced. */
 @layer base {
+  /* A page carrying the sticky CTA reserves its height, so the bar never
+     covers the footer at the end of the scroll. Keyed off the bar's own
+     presence: a page without one pays nothing. */
+  body:has([data-sticky-cta]) {
+    padding-bottom: 3.5rem; /* matches the bar's h-14 */
+  }
+
   [data-accent="violet"] { --accent: var(--color-violet); }
   [data-accent="teal"]   { --accent: var(--color-teal); }
   [data-accent="blue"]   { --accent: var(--color-blue); }
