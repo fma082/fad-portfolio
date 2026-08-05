@@ -194,6 +194,48 @@ export interface BadgeVocabulary {
   tokens: number;
 }
 
+/* ── Agent Builder node ─────────────────────────────────────────────────── */
+
+/**
+ * One state of the `Node` component set in the Agent Builder library.
+ *
+ * Read from Figma on 2026-08-05 through the MCP, read-only:
+ * component set `Node` (2494:2865), variants 2494:2814 / :2831 / :2848. The
+ * set has exactly three variants — there is no hover, running or disabled
+ * state. `Node / Indicator` carries seven kinds including Running and Failed,
+ * but that is the header dot, not the node's own state.
+ *
+ * Chains were resolved against tokens-source.json and every resolved hex
+ * matches what Figma returns for the variant, so for these tokens the export
+ * is not stale.
+ */
+export interface NodeState {
+  id: string;
+  label: string;
+  /** Border token bound by the variant, as Figma names it. */
+  token: string;
+  /**
+   * Null when the variant binds a semantic token directly, with no
+   * component-layer token between it and the ramp.
+   */
+  semantic: string | null;
+  primitive: string;
+  hex: string;
+  note?: string;
+}
+
+/** Structure tokens shared by all three variants — what the node is painted with. */
+export interface NodeStructure {
+  bg: string;
+  label: string;
+  sublabel: string;
+  divider: string;
+  bodyText: string;
+  accent: string;
+  portBg: string;
+  portBorder: string;
+}
+
 export interface ProjectLink {
   id: "figma" | "repo" | "tokensRepo" | "demo" | "storybook";
   label: string;
@@ -299,6 +341,10 @@ export interface FluuenData {
     aliasChains: AliasChain[];
     /** The Agent badge, resolved state by state. */
     badgeStates: BadgeState[];
+    /** The Agent Builder node: three variants, three border tokens. */
+    nodeStates: NodeState[];
+    /** What the node is painted with, shared across all three variants. */
+    nodeStructure: NodeStructure;
     /** The three state vocabularies the same base badge carries. */
     badgeVocabularies: BadgeVocabulary[];
     coverage: { synced: string[]; manual: string[] };
@@ -636,6 +682,48 @@ const badgeVocabularies: BadgeVocabulary[] = [
     tokens: 18,
   },
 ];
+
+/* ── Agent Builder node ─────────────────────────────────────────────────── */
+
+const nodeStates: NodeState[] = [
+  {
+    id: "default",
+    label: "Default",
+    token: "Control/Node/Structure/border-default",
+    semantic: "border.default",
+    primitive: "river-styx.400",
+    hex: "#1e1e26",
+  },
+  {
+    id: "selected",
+    label: "Selected",
+    token: "Control/Node/Structure/border-selected",
+    semantic: "border.focus",
+    primitive: "brand.400",
+    hex: "#818cf8",
+    note: "The code reaches for brand.500 here instead — one step down the same ramp. That is divergence 4, and the step is the whole divergence.",
+  },
+  {
+    id: "error",
+    label: "Error",
+    token: "border/error",
+    semantic: null,
+    primitive: "red.600",
+    hex: "#e5261d",
+    note: "Error binds the semantic token directly — no component-level token.",
+  },
+];
+
+const nodeStructure: NodeStructure = {
+  bg: "#111116",
+  label: "#f3f4f6",
+  sublabel: "#868e9e",
+  divider: "#1e1e26",
+  bodyText: "#e5e7eb",
+  accent: "#3b82f6",
+  portBg: "#0d0d12",
+  portBorder: "#2a2a3a",
+};
 
 /* ── Drift (docs/briefs/fluuen-token-drift.md) ──────────────────────────── */
 
@@ -1228,6 +1316,8 @@ export const fluuenData: FluuenData = {
     layers,
     aliasChains,
     badgeStates,
+    nodeStates,
+    nodeStructure,
     badgeVocabularies,
     coverage: {
       synced: ["color", "alpha variants", "references between tokens"],
@@ -1253,6 +1343,8 @@ export const fluuenData: FluuenData = {
   divergences,
   resolvedUnknowns,
   notes: [
+    "The Node component set has exactly three variants — Default, Selected, Error — and each binds its border differently. Default and Selected go through a component token; Error binds the semantic border/error straight, with nothing at the component layer. It is the second recorded instance of the same shape as Control/Edge/success, which used status/success as a stand-in: not an isolated slip, a pattern.",
+    "Control/Node/Structure/border-hover exists in the token repo, resolves to border.strong (#2a2a3a), and is bound by no variant and referenced by no component. The inverse of the Error case: there the state exists without a token, here the token exists without a state.",
     "The status badge is the most reused pattern in the system: one base component carrying three state vocabularies — Agent (20 tokens), Run (16), Generic (18). Which states exist per surface is a product decision, not a styling one. An agent pauses and a run cancels, and neither word appears in the other's family.",
     "Three of the five Agent states depart from the shape the other two share: paused resolves to yellow.300 rather than a 500 step, error goes through text.error-light instead of status.error and uses a 10% surface where the rest use 20%, and draft has no status semantic at all. Each departure is recorded on its own state rather than smoothed over.",
     "The Fluuen repo is read-only and was not edited for any of this. sync-tokens.mjs is written with Spanish comments and Spanish section headers; the snippets here show them in English, flagged per snippet by `commentsTranslated`. The translation is deliberate — the case study is in English and the source is not — so it is not a transcription error to correct.",

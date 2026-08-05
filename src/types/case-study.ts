@@ -147,26 +147,46 @@ export type TokenChainBlock = {
   caption?: string;
 };
 
-/* Interactive status badge — the same base component under each of its states,
-   with the resolution chain for whichever one is selected. Client-side. */
-export type StatusBadgeDemoBlock = {
-  type: "statusBadgeDemo";
+/* The Agent Builder node under each of its states, with the chain that
+   produced its border. Client-side. Every colour arrives resolved — the block
+   never names a token, it prints the one it was handed. */
+export type NodeDemoBlock = {
+  type: "nodeDemo";
   title?: string;
   intro?: string;
   states: {
     id: string;
     label: string;
-    icon: "check" | "loader" | "pause" | "x" | "file";
-    semantic: string;
+    token: string;
+    /* Null when the variant binds a semantic token with no component token
+       above it. Rendered as an explicit gap, not hidden. */
+    semantic: string | null;
     primitive: string;
     hex: string;
-    bg: string;
-    border: string;
     note?: string;
   }[];
-  /* The state vocabularies the same badge carries, one row each. */
-  vocabularies?: { name: string; surface: string; states: string[] }[];
+  /* What the node is painted with, apart from its border. */
+  structure: {
+    canvas: string;
+    bg: string;
+    label: string;
+    sublabel: string;
+    divider: string;
+    bodyText: string;
+    accent: string;
+    portBg: string;
+    portBorder: string;
+  };
   caption?: string;
+};
+
+/* Inline call to action — one line and a link, placed where the page has just
+   earned it. Quiet by construction: no filled button, no box. */
+export type CtaBlock = {
+  type: "cta";
+  body: string;
+  label: string;
+  href: string;
 };
 
 /* A source excerpt with its origin and the decision it encodes. `code` is
@@ -234,7 +254,8 @@ export type Block =
   | VariantMatrixBlock
   | SpecListBlock
   | TokenChainBlock
-  | StatusBadgeDemoBlock
+  | NodeDemoBlock
+  | CtaBlock
   | CodePeekBlock
   | DivergenceTableBlock
   | LinkOutBlock
@@ -251,6 +272,9 @@ export type CaseStudy = {
      the thing exists before the first argument about it. It sits outside
      `blocks` because CaseBody drops anything preceding the first section. */
   cover?: CaseImage;
+  /* Fixed bar at the bottom of the viewport for the whole scroll. Outside
+     `blocks` because it is page chrome, not a step in the argument. */
+  stickyCta?: { label: string; cta: string; href: string };
   blocks: Block[];
   nextCase?: { href: string; title: string; cta: string };
   /* Overrides the document title and description. Without it they fall back to

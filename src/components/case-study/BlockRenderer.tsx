@@ -20,8 +20,9 @@ import {
   CodePeek,
   DivergenceTable,
   LinkOut,
+  Cta,
 } from "./blocks/SystemBlocks";
-import { StatusBadgeDemo } from "./blocks/StatusBadgeDemo";
+import { NodeDemo } from "./blocks/NodeDemo";
 import { FigmaEmbed } from "./blocks/FigmaEmbed";
 
 export function BlockRenderer({ block }: { block: Block }) {
@@ -63,14 +64,16 @@ export function BlockRenderer({ block }: { block: Block }) {
       return <SpecList block={block} />;
     case "tokenChain":
       return <TokenChain block={block} />;
-    case "statusBadgeDemo":
-      return <StatusBadgeDemo block={block} />;
+    case "nodeDemo":
+      return <NodeDemo block={block} />;
     case "codePeek":
       return <CodePeek block={block} />;
     case "divergenceTable":
       return <DivergenceTable block={block} />;
     case "linkOut":
       return <LinkOut block={block} />;
+    case "cta":
+      return <Cta block={block} />;
     case "figmaEmbed":
       return <FigmaEmbed block={block} />;
     default: {

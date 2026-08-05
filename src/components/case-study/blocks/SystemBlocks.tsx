@@ -3,6 +3,7 @@ import type {
   CodePeekBlock,
   DivergenceTableBlock,
   LinkOutBlock,
+  CtaBlock,
 } from "@/types/case-study";
 
 /* Blocks for a case study about a system rather than a surface: an alias chain
@@ -225,5 +226,26 @@ export function LinkOut({ block }: { block: LinkOutBlock }) {
         <span aria-hidden>↗</span>
       </a>
     </div>
+  );
+}
+
+/* ─── Inline CTA ─────────────────────────────────────────────────────────── */
+
+/* Deliberately not a button. It sits inside the reading column right after the
+   evidence that earns it, so it reads as the next sentence rather than as an
+   advertisement interrupting one. */
+export function Cta({ block }: { block: CtaBlock }) {
+  return (
+    <p className="max-w-3xl font-sans text-base text-fg-muted leading-relaxed">
+      {block.body}{" "}
+      <a
+        href={block.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-mono text-sm tracking-wide text-(--accent) underline decoration-(--accent)/30 underline-offset-4 hover:decoration-(--accent) transition-colors duration-200 whitespace-nowrap"
+      >
+        {block.label}
+      </a>
+    </p>
   );
 }

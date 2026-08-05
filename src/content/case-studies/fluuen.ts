@@ -38,10 +38,7 @@ const SHOT = (name: string) =>
 
 const divergenceCount = drift.cssOnly + drift.figmaOnly;
 
-/* Section 04 covers the Agent Builder sweep: entries 1-6. Entry 7 is the
-   pipeline-wide typography drift and 8 is the screens boundary, and both are
-   argued in their own sections. */
-const agentBuilderDivergences = f.divergences.filter((d) => d.id <= 6);
+const demoHref = f.links.find((l) => l.id === "demo")!.href;
 
 /* Looked up by id rather than by index: the ids are stable in the data file,
    the array order is not guaranteed to stay that way. */
@@ -82,6 +79,12 @@ const overview: Block[] = [
       "The order of events was not the order the finished thing suggests. The system came first: primitives, the River Styx scale, a typographic migration, component tokens by layer. The product came four months later, and it came as a portfolio demo — something to send in a proposal. What changed along the way was the reading, not the plan. Building the product was what tested whether the system held, and the test turned out to be worth more than the artefact it was built to demonstrate.",
       `That is the claim this case study can make and defend: ${published.total} color tokens across ${layers.length} layers, generated from Figma into a product that runs on them. Not a finished design system — a system that survived contact with production, and a record of what that contact exposed.`,
     ],
+  },
+  {
+    type: "cta",
+    body: "This is a real, navigable product.",
+    label: "Try it live →",
+    href: demoHref,
   },
 ];
 
@@ -151,21 +154,11 @@ const pipeline: Block[] = [
       note: step.does,
     })),
   },
-  ...f.pipeline.snippets.map(
-    (snippet): Block => ({
-      type: "codePeek",
-      file: snippet.file,
-      lines: snippet.lines,
-      title: snippet.title,
-      code: snippet.code,
-      decision: snippet.decision,
-    }),
-  ),
   {
     type: "linkOut",
-    href: f.links.find((l) => l.id === "tokensRepo")!.href,
-    label: "Token repo",
-    body: "The repository the script fetches from is public. It is the one artefact that makes the pipeline inspectable rather than described — the same JSON the generator reads, at the commit it last read.",
+    href: f.links.find((l) => l.id === "storybook")!.href,
+    label: "Storybook",
+    body: "The Storybook is where the pipeline stops being a description. Foundations parses the tokens out of the production build rather than restating them, so the documentation cannot drift from the CSS it documents — and the generated names are readable there exactly as the script emitted them.",
   },
   {
     type: "decision",
@@ -192,6 +185,12 @@ const findings: Block[] = [
     alt: "The Fluuen Agent Builder: a node canvas with a trigger, two action nodes and an AI node wired together, the node catalog on the left and the inspector open on the right",
     caption: "Agent Builder — the screen the component layer was built for",
     tag: "Product",
+  },
+  {
+    type: "cta",
+    body: "Build an agent yourself in the demo.",
+    label: "Open the builder →",
+    href: demoHref,
   },
   {
     type: "section",
@@ -235,16 +234,6 @@ const findings: Block[] = [
       drift.methodLesson,
     ],
   },
-  {
-    type: "specList",
-    items: drift.groups.map((group) => ({
-      label: `${group.key} · ${group.title}`,
-      value: `${group.count} ${group.side === "css-only" ? "in CSS" : "in Figma"}`,
-      note: group.cause,
-    })),
-  },
-  /* A classification, not an impact metric — and it follows the counts above,
-     which are. Two fields of large numbers in a row would compete. */
   {
     type: "specList",
     items: [
@@ -318,41 +307,47 @@ const classified: Block[] = [
   },
   {
     type: "divergenceTable",
-    summary: `${agentBuilderDivergences.length} entries · Agent Builder · recorded 2026-07-02 to 07-04, re-read ${f.source.extractedAt}`,
-    rows: agentBuilderDivergences.map((d) => ({
-      item: d.item,
-      code: d.code.value,
-      codeAt: d.code.location ?? undefined,
-      figma: d.figma.value,
-      figmaAt: d.figma.location ?? undefined,
-      category: CATEGORY_LABEL[d.category] ?? d.category,
-      status: statusLabel(d),
-      note: d.reason,
-    })),
+    summary: `Recorded 2026-07-02 to 07-04, re-read ${f.source.extractedAt}`,
+    rows: [1, 4, 8].map((id) => {
+      const d = divergence(id);
+      return {
+        item: d.item,
+        code: d.code.value,
+        codeAt: d.code.location ?? undefined,
+        figma: d.figma.value,
+        figmaAt: d.figma.location ?? undefined,
+        category: CATEGORY_LABEL[d.category] ?? d.category,
+        status: statusLabel(d),
+        note: d.reason,
+      };
+    }),
   },
   {
-    type: "statusBadgeDemo",
-    title: "The most reused pattern in the system",
+    type: "nodeDemo",
+    title: "The node, under each of its states",
     intro:
-      "The status badge is where the layering earns its keep. Pick a state and the badge repaints — and so does the chain underneath it, which is the same four boxes from section 01 with a different middle.",
-    states: f.tokens.badgeStates.map((state) => ({
+      "The Agent Builder node has exactly three states in Figma. Pick one and the border repaints — and so does the chain that produced it. Two of the three resolve through a component token; the third does not.",
+    states: f.tokens.nodeStates.map((state) => ({
       id: state.id,
       label: state.label,
-      icon: state.icon,
+      token: state.token,
       semantic: state.semantic,
       primitive: state.primitive,
       hex: state.hex,
-      bg: state.bg,
-      border: state.border,
       note: state.note,
     })),
-    vocabularies: f.tokens.badgeVocabularies.map((vocabulary) => ({
-      name: vocabulary.name,
-      surface: vocabulary.surface,
-      states: vocabulary.states,
-    })),
-    caption:
-      "One base badge, three vocabularies. An agent pauses; a run cancels; neither word exists in the other's family. Which states a surface has is a product decision, and the system is what keeps that decision from turning into a colour decision as well.",
+    structure: {
+      /* The canvas the node sits on, so the border reads at its real weight. */
+      canvas: f.tokens.nodeStructure.portBg,
+      bg: f.tokens.nodeStructure.bg,
+      label: f.tokens.nodeStructure.label,
+      sublabel: f.tokens.nodeStructure.sublabel,
+      divider: f.tokens.nodeStructure.divider,
+      bodyText: f.tokens.nodeStructure.bodyText,
+      accent: f.tokens.nodeStructure.accent,
+      portBg: f.tokens.nodeStructure.portBg,
+      portBorder: f.tokens.nodeStructure.portBorder,
+    },
   },
   {
     type: "tradeoff",
@@ -446,6 +441,12 @@ const whatsTrue: Block[] = [
       },
     ],
   },
+  {
+    type: "prose",
+    body: [
+      "These aren't bugs — they're classified divergences. In a live product each has a one-line fix; as a portfolio piece, finding and naming them was the point.",
+    ],
+  },
 ];
 
 /* ── 06 · Live ──────────────────────────────────────────────────────────── */
@@ -492,6 +493,11 @@ export const fluuen: CaseStudy = {
   },
   tags: ["Design system", "Design tokens", "AI agents", "B2B SaaS"],
   links,
+  stickyCta: {
+    label: "Fluuen — a shipped AI automation product",
+    cta: "Live demo →",
+    href: demoHref,
+  },
   cover: {
     src: SHOT("Dashboard"),
     alt: "The Fluuen dashboard: metric cards, a runs chart, agent status list and recent run history, on the dark River Styx surface",

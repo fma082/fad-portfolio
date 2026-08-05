@@ -5,6 +5,7 @@ import { CaseHero } from "@/components/case-study/CaseHero";
 import { CaseLinks } from "@/components/case-study/CaseLinks";
 import { CaseBody } from "@/components/case-study/CaseBody";
 import { ImageFrame } from "@/components/case-study/ImageFrame";
+import { StickyCta } from "@/components/case-study/StickyCta";
 import { CaseFooter } from "@/components/case-study/CaseFooter";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -31,7 +32,8 @@ export default async function CaseStudyPage({ params }: Params) {
   const study = getCaseStudy(slug);
   if (!study) notFound();
 
-  const { meta, tags, links, stats, cover, blocks, nextCase } = study;
+  const { meta, tags, links, stats, cover, stickyCta, blocks, nextCase } =
+    study;
 
   return (
     /* data-accent feeds --accent to every descendant through the cascade */
@@ -63,6 +65,8 @@ export default async function CaseStudyPage({ params }: Params) {
       <CaseBody blocks={blocks} />
 
       {nextCase && <CaseFooter {...nextCase} />}
+
+      {stickyCta && <StickyCta {...stickyCta} />}
     </main>
   );
 }

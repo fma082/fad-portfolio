@@ -71,6 +71,23 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
   `_data/fluuen.ts` lo codifica como `tokens.published` / `tokens.alternate`,
   con la regla en el comentario de cada campo. Si alguna sesión futura "corrige"
   el Overview al número reproducible por grep, eso es el regreso.
+- **El componente interactivo de la case study es el NODO, no el badge**
+  (2026-08-05). `StatusBadgeDemo` se borró y lo reemplazó `NodeDemo`: las tres
+  variantes del component set `Node` del Agent Builder, leídas de Figma vía MCP
+  (`2494:2865` → `:2814` / `:2831` / `:2848`), guardadas en `tokens.nodeStates`
+  y `tokens.nodeStructure`.
+  **El set tiene exactamente tres variantes: Default, Selected, Error.** No hay
+  hover, running ni disabled. El átomo `Node / Indicator` sí tiene siete kinds
+  (incluidos Running y Failed), pero ese es el puntito del header, no el estado
+  del nodo. Si alguien pide "el estado hover del nodo", no existe.
+  **Error no tiene token de capa de componente**: bindea `border/error`
+  (semántico) directo. Es la segunda instancia registrada del mismo patrón que
+  `Control/Edge/success`. La nota va en **gris neutro**, no en ámbar: es una
+  observación sobre la forma del sistema, no una advertencia. Un campo ámbar
+  editorializa un dato que se lee mejor plano.
+  `Control/Node/Structure/border-hover` existe en el repo de tokens, resuelve a
+  `border.strong` (#2a2a3a) y **no lo usa ninguna variante ni ningún componente**
+  — el inverso del caso Error: acá sobra el token y falta el estado.
 - **Los hex de un componente interactivo salen de `_data`, o no van**
   (2026-08-04). `StatusBadgeDemo` es el único bloque cliente de una case study y
   pinta con colores reales: los 5 estados del Agent badge resueltos desde
@@ -287,6 +304,24 @@ Countersign va **sin link a propósito**: el demo comparte estado entre visitant
 y `/scenario` no avisa que los datos son ficticios. Alguien que cae ahí sin
 contexto puede encontrarlo ya destruido por otro. Desde una case study se
 encuadra con una línea de copy; desde la home, no.
+
+### Capa de conversión en `/work/fluuen` (2026-08-05)
+
+Tres CTAs al demo, todos derivando el href de `links` en `_data`:
+
+- `cta` inline después de la 00 — "This is a real, navigable product."
+- `cta` inline después del Workflow Builder — "Build an agent yourself in the demo."
+- `stickyCta`, barra fija abajo — "Fluuen — a shipped AI automation product"
+
+El bloque `cta` **no es un botón**: va dentro de la columna de lectura, justo
+después de la evidencia que lo gana, para que se lea como la oración siguiente y
+no como una publicidad interrumpiendo una.
+
+`stickyCta` vive en `CaseStudy`, **fuera de `blocks`** — es chrome de página, no
+un paso del argumento. Mismo patrón que `cover`. Aparece recién pasados 600px de
+scroll (antes está el botón del hero en pantalla y una segunda copia es ruido) y
+**se puede cerrar**: una barra que no se cierra es lo único que la gente recuerda
+de una página.
 
 ### Capturas de producto en `/work/fluuen` (2026-08-04)
 
