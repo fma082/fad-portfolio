@@ -5,6 +5,7 @@ import type {
   LinkOutBlock,
   CtaBlock,
 } from "@/types/case-study";
+import { SECONDARY_BUTTON } from "../CaseLinks";
 
 /* Blocks for a case study about a system rather than a surface: an alias chain
    resolved hop by hop, a source excerpt with the decision it encodes, and a
@@ -143,11 +144,17 @@ export function DivergenceTable({ block }: { block: DivergenceTableBlock }) {
         </p>
       )}
 
-      <div className="border-y border-border">
+      {/* One grid for the table, `subgrid` rows inside it. Each row used to
+          declare its own tracks, so the `auto` pill column was measured per
+          row — three different pill widths meant the two value columns started
+          at a different x in every row. Sharing one track list is what makes
+          the columns line up; the rows stay separate elements because each one
+          carries its own top border. */}
+      <div className="border-y border-border lg:grid lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:gap-x-6">
         {block.rows.map((row, i) => (
           <div
             key={`${row.item}-${i}`}
-            className={`grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_auto] gap-x-6 gap-y-3 py-5 items-start ${
+            className={`grid grid-cols-1 lg:grid-cols-subgrid lg:col-span-4 gap-x-6 gap-y-3 py-5 items-start ${
               i === 0 ? "" : "border-t border-border"
             }`}
           >
@@ -156,7 +163,10 @@ export function DivergenceTable({ block }: { block: DivergenceTableBlock }) {
             </p>
             <Side value={row.code} at={row.codeAt} swatch={row.codeSwatch} />
             <Side value={row.figma} at={row.figmaAt} swatch={row.figmaSwatch} />
-            <span className="font-mono text-[10px] tracking-[0.05em] uppercase px-2 py-1 rounded bg-(--accent)/10 text-(--accent) justify-self-start lg:justify-self-end whitespace-nowrap">
+            {/* Left-aligned, not right: the shared track is exactly as wide as
+                the widest pill, so starting them together puts all three on one
+                vertical and still ends the table on the table's right edge. */}
+            <span className="font-mono text-[10px] tracking-[0.05em] uppercase px-2 py-1 rounded bg-(--accent)/10 text-(--accent) justify-self-start whitespace-nowrap">
               {row.pill}
             </span>
           </div>
@@ -166,6 +176,11 @@ export function DivergenceTable({ block }: { block: DivergenceTableBlock }) {
   );
 }
 
+/* The swatch gutter is reserved on every row, occupied or not, and the file
+   location sits in the same column as the value above it. With the swatch
+   inline, a row without one started its value 22px to the left of the rows
+   with one, and the location started 22px to the left of its own value — three
+   different left edges in a table whose whole job is comparing two columns. */
 function Side({
   value,
   at,
@@ -176,19 +191,21 @@ function Side({
   swatch?: string;
 }) {
   return (
-    <div className="min-w-0">
-      <p className="flex items-center gap-2 font-mono text-[11px] text-fg-muted break-words leading-snug">
-        {swatch && (
-          <span
-            aria-hidden
-            className="h-3.5 w-3.5 shrink-0 rounded-sm ring-1 ring-inset ring-border-strong"
-            style={{ background: swatch }}
-          />
-        )}
+    <div className="min-w-0 grid grid-cols-[0.875rem_minmax(0,1fr)] gap-x-2">
+      {swatch ? (
+        <span
+          aria-hidden
+          className="h-3.5 w-3.5 mt-px rounded-sm ring-1 ring-inset ring-border-strong"
+          style={{ background: swatch }}
+        />
+      ) : (
+        <span aria-hidden />
+      )}
+      <p className="font-mono text-[11px] text-fg-muted break-words leading-snug">
         {value}
       </p>
       {at && (
-        <p className="font-mono text-[10px] text-fg-faint break-all leading-snug mt-1">
+        <p className="col-start-2 font-mono text-[10px] text-fg-faint break-all leading-snug mt-1">
           {at}
         </p>
       )}
@@ -198,9 +215,9 @@ function Side({
 
 /* ─── Link out ───────────────────────────────────────────────────────────── */
 
-/* An artefact linked where it is being discussed, rather than in the hero. The
-   border is the accent at full strength — measured at 4.76:1 against canvas on
-   the weakest accent in the set, against a 3:1 minimum for non-text UI. */
+/* An artefact linked where it is being discussed, rather than in the hero. It
+   takes the same neutral treatment as the hero's secondary buttons — it is not
+   a demo CTA, and the accent is reserved for those. */
 export function LinkOut({ block }: { block: LinkOutBlock }) {
   return (
     <div className="max-w-3xl">
@@ -213,7 +230,7 @@ export function LinkOut({ block }: { block: LinkOutBlock }) {
         href={block.href}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 px-5 py-2.5 border border-(--accent) text-(--accent) hover:bg-(--accent)/10 font-mono text-xs tracking-widest uppercase transition-colors duration-200"
+        className={`inline-flex items-center gap-2 px-5 py-2.5 font-mono text-xs tracking-widest uppercase transition-colors duration-200 ${SECONDARY_BUTTON}`}
       >
         {block.label}
         <span aria-hidden>↗</span>
@@ -227,13 +244,19 @@ export function LinkOut({ block }: { block: LinkOutBlock }) {
 /* A tinted panel, not a sentence: it interrupts the reading column on purpose,
    placed right after the evidence that earns it. The button carries dark text
    on the accent fill — white fails 4.5:1 on every accent in the set, these
-   being light hues on a near-black canvas. */
+   being light hues on a near-black canvas.
+
+   Full width, not `max-w-3xl`: it follows a full-width capture, and a panel
+   stopping short of the image above it read as a mistake rather than as a
+   narrower measure. Prose keeps its reading width; this is not prose. */
 export function Cta({ block }: { block: CtaBlock }) {
   return (
-    <div className="max-w-3xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-xl border border-(--accent)/20 bg-(--accent)/[0.06] px-6 py-5">
-      <p className="font-sans text-[15px] text-fg leading-relaxed text-center sm:text-left">
-        {block.body}
-      </p>
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-xl border border-(--accent)/20 bg-(--accent)/[0.06] px-6 py-5">
+      {block.body && (
+        <p className="font-sans text-[15px] text-fg leading-relaxed text-center sm:text-left">
+          {block.body}
+        </p>
+      )}
       <a
         href={block.href}
         target="_blank"

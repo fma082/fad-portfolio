@@ -48,7 +48,15 @@ export type SectionBlock = {
   label: string;
   title?: string;
   body?: string[];
+  /* A single sober link on the title line, right-aligned to the content edge.
+     For the one artefact the whole section is pointing at — not a second CTA
+     next to the first. */
+  action?: { label: string; href: string };
 };
+
+/* A second heading inside a section, one step below the section title. For a
+   section that presents two artefacts and needs to name the second. */
+export type SubheadBlock = { type: "subhead"; title: string };
 
 export type ProseBlock = { type: "prose"; body: string[] };
 
@@ -184,7 +192,10 @@ export type NodeDemoBlock = {
    earned it. Quiet by construction: no filled button, no box. */
 export type CtaBlock = {
   type: "cta";
-  body: string;
+  /* Optional: a CTA that follows a capture which already made the argument
+     needs no sentence, and inventing one to fill the panel is worse than the
+     button standing alone. */
+  body?: string;
   label: string;
   href: string;
 };
@@ -240,6 +251,7 @@ export type FigmaEmbedBlock = {
 
 export type Block =
   | SectionBlock
+  | SubheadBlock
   | ProseBlock
   | DecisionBlock
   | TradeoffBlock

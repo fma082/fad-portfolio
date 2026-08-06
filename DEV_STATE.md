@@ -3,7 +3,7 @@
 Estado vivo del proyecto. Claude Code: leé esto al empezar cada sesión.
 Actualizalo al cerrar una fase o después de una decisión de arquitectura.
 
-Última actualización: 2026-08-04
+Última actualización: 2026-08-06
 
 ---
 
@@ -118,6 +118,84 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
   `Control/Node/Structure/border-hover` existe en el repo de tokens, resuelve a
   `border.strong` (#2a2a3a) y **no lo usa ninguna variante ni ningún componente**
   — el inverso del caso Error: acá sobra el token y falta el estado.
+- **El accent se reserva para el título y los CTAs de demo** (2026-08-06). En el
+  hero de Fluuen había cinco cosas violetas compitiendo. Quedaron dos: el título
+  y el botón sólido `LIVE DEMO`. Lo que bajó a neutro:
+  - Los cuatro números de la barra de stats van `text-fg`. El tamaño y la mono ya
+    los hacen lo más fuerte de la fila; el color no agregaba jerarquía, la
+    diluía.
+  - **Los botones que NO son CTA de demo son grises**: `border-border-strong`
+    + `text-fg` (`SECONDARY_BUTTON`). Los usan los del hero y `LinkOut`. El borde
+    queda bajo 3:1 contra el canvas a propósito: la etiqueta es `text-fg` a
+    fuerza completa y es ella la que porta la afordancia.
+  - **Un botón que SÍ es CTA de demo se queda en accent**: `ACCENT_OUTLINE_BUTTON`
+    —borde y texto accent a fuerza completa, fondo transparente— outline y no
+    relleno, para quedar abajo del sólido del hero en el orden de pedidos de la
+    página. Lo usa `section.action`. Medido: 5,88:1 texto y borde contra canvas.
+  - El sólido violeta sigue siendo `text-canvas` (ver la entrada de contraste).
+
+  **Las tres variantes viven en `CaseLinks.tsx`** (`BUTTON_BASE` + `PRIMARY` /
+  `SECONDARY_BUTTON` / `ACCENT_OUTLINE_BUTTON`) y se importan desde ahí. Si
+  aparece un botón nuevo con su propio padding, es un regreso: el tamaño es
+  `BUTTON_BASE` y no se re-declara.
+- **Los CTAs del builder van al deep-link, no al home del demo** (2026-08-06).
+  Vercel analytics mostró que los lectores caían en el home y no llegaban al
+  builder, que es la superficie más persuasiva. Los dos CTAs que están al lado de
+  evidencia del builder —el de la 02 bajo la captura, el de la 06 bajo el GIF—
+  abren `/agents/agent-01/builder` directo. El CTA de la cover y la barra sticky
+  siguen al home: ahí el argumento todavía es "esto existe", no "entrá acá".
+  El deep-link vive en `_data/links` con id `builder`. **Los cuatro CTAs derivan
+  el href de `_data`** — ninguna URL escrita en el content file.
+- **El bloque `cta` puede no tener `body`** (2026-08-06). El de la 06 va detrás
+  del GIF, que ya hizo el argumento; una oración que lo repita es relleno.
+  `body` es opcional y el panel renderiza solo con el botón.
+- **Los bloques full-width cortan en la misma vertical que las imágenes**
+  (2026-08-06). El panel del `cta` tenía `max-w-3xl` y quedaba corto contra la
+  captura de arriba, que se lee como error y no como medida de lectura. La prosa
+  conserva su ancho; los paneles no. Verificado midiendo: todos los frames de la
+  página (imágenes, GIF, CTAs, nodeDemo, embed) arrancan en 126 y terminan en
+  1310 a 1440px de viewport. El `<img>` mide 1px adentro porque su frame tiene
+  borde — eso es correcto, no un desalineo.
+- **La tabla de divergencias es UNA grilla con filas `subgrid`** (2026-08-06).
+  Antes cada fila declaraba sus propios tracks, así que la columna `auto` del
+  pill se medía **por fila**: tres anchos de pill distintos movían las dos
+  columnas de valores a un x distinto en cada fila. Con `grid-cols-subgrid` +
+  `col-span-4` las tres comparten track list y las columnas caen a plomo.
+  Dos detalles que van con eso:
+  - **El canal del swatch se reserva siempre**, ocupado o no. Con el swatch
+    inline, una fila sin swatch arrancaba 22px a la izquierda de las que sí
+    tenían, y la ubicación de archivo arrancaba 22px a la izquierda de su propio
+    valor. Tres bordes izquierdos distintos en una tabla que existe para comparar
+    dos columnas.
+  - **Los pills van `justify-self-start`**, no `end`. El track mide exactamente
+    lo que el pill más ancho, así que alinearlos por la izquierda los pone a
+    todos en una vertical y la tabla igual termina en su borde derecho.
+- **Una case study con Figma cierra con el archivo, titulado "The file, as
+  it's published"** (2026-08-06). Patrón **compartido** entre Fluuen y Design
+  System: la última sección es el embed, y el header dice qué está mirando el
+  lector —el artefacto publicado— en vez de nombrar la herramienta que lo
+  hospeda. El título viejo era `FIGMA — LIVE FILE`. El link de la derecha sigue
+  siendo `OPEN IN FIGMA ↗`.
+  El título vive en `FigmaEmbed`, **no** es un prop del bloque: es la regla, no
+  una decisión por caso. Si un caso futuro necesita otro header, ahí recién se
+  vuelve prop.
+- **Un GIF animado se sirve `unoptimized`, y hay que verificarlo en el browser**
+  (2026-08-06). El optimizador de `next/image` re-encodea a un frame quieto, así
+  que un GIF pasado por `/_next/image` queda **congelado en el frame 1** y se lee
+  como una captura mal puesta, no como un bug. `ImageFrame` detecta la extensión
+  (`ANIMATED = /\.gif$/i`) y le pasa `unoptimized`, que es el mecanismo
+  documentado: mismo `<img>`, mismo width/height, pero el archivo crudo de `src`.
+  No hace falta un `<img>` pelado ni desactivar la regla de eslint.
+  `imageSize()` ahora también lee el header GIF (**little-endian**, a diferencia
+  de PNG y JPEG) — sin eso el frame caía al fallback 16:9 y el reserve de altura
+  quedaba mal.
+  **Cómo se verifica que anima** (no alcanza con mirar el `<img>` en el HTML):
+  1. el `src` servido apunta al `.gif` crudo, sin `/_next/image`;
+  2. los bytes servidos son idénticos al archivo y conservan sus GCEs y el
+     `NETSCAPE2.0` del loop;
+  3. tres capturas en tiempo real, recortadas al elemento, dan tres frames
+     distintos. Los pasos 1 y 2 los pasa igual un GIF de un solo frame; el 3 es
+     el que decide.
 - **Los hex de un componente interactivo salen de `_data`, o no van**
   (2026-08-04). `StatusBadgeDemo` es el único bloque cliente de una case study y
   pinta con colores reales: los 5 estados del Agent badge resueltos desde
@@ -369,19 +447,43 @@ scroll (antes está el botón del hero en pantalla y una segunda copia es ruido)
 **se puede cerrar**: una barra que no se cierra es lo único que la gente recuerda
 de una página.
 
-### Capturas de producto en `/work/fluuen` (2026-08-04)
-
-Cuatro de las cinco PNG de `public/images/projects/fluuen/` están colocadas:
+### Capturas de producto en `/work/fluuen` (2026-08-04, revisado 2026-08-06)
 
 | Archivo | Dónde | Por qué ahí |
 |---|---|---|
 | `Dashboard.png` | `cover`, entre hero y 00 | Ancla: prueba que existe antes del primer argumento |
 | `Workflow Builder.png` | cierre de la 02 | Rompe el muro de texto antes de la sección más densa |
 | `Agents.png` | 05 · What's true | Los estados de fallo están diseñados, no omitidos |
-| `Run Detail.png` | 06 · Live | El vocabulario `Run` del mismo badge, en su superficie |
+| `builder-run.gif` | 06 · Live, antes del embed | El builder corriendo: 45 frames, 246 KB, 1100×663 |
 
-`Integrations.png` **está en la carpeta y sin colocar a propósito** — decisión
-pendiente de Facundo. No la borres.
+`Integrations.png` y `Run Detail.png` **están en la carpeta y sin colocar** — no
+las borres. `Run Detail.png` estaba en la 06 y salió el 2026-08-06: con el GIF
+corriendo arriba, un timeline quieto de una corrida terminada es la misma
+ejecución contada dos veces. Si vuelve, va a otra sección, no debajo del GIF.
+
+**La 06 son cuatro elementos** (revisado 2026-08-06): título + CTA, GIF,
+subtítulo, embed. Ese orden es el argumento —primero el producto corriendo,
+después el archivo del que salió— y el embed arranca en Cover.
+
+- **Un solo CTA al builder por sección.** El `cta` de caja tintada que estaba
+  debajo del GIF salió: el link al builder vive ahora en la línea del título.
+  Dos CTAs al mismo destino en una sección se anulan.
+- **`section.action`** (nuevo, 2026-08-06): un botón opcional en la línea del
+  título, empujado al borde del contenido — cae en la misma vertical que el
+  borde derecho de los frames de abajo, y centrado contra el `h2`.
+  Nació como link mono de 10px en accent y **no funcionó**: contra un título
+  serif de 36px no tenía peso y se perdía en el canvas. Ahora es
+  `ACCENT_OUTLINE_BUTTON` al tamaño de los secundarios del hero (38px de alto,
+  mono 12px) — ×3,9 de área contra la versión link. Outline y no relleno para no
+  competir con el título ni con el sólido del hero.
+  Por esto `SectionIntro` ya **no** es `max-w-3xl` en su raíz: la fila del
+  título es ancho completo y el `max-w-3xl` pasó al `h2` y al cuerpo.
+- **`subhead`** (nuevo, 2026-08-06): un `h3` serif un escalón abajo del título
+  de sección (30px contra 36px), para una sección que presenta dos artefactos y
+  necesita nombrar el segundo. No abre sección ni lleva número: un bloque
+  `section` habría abierto un grupo nuevo en `CaseBody`.
+  `CaseBody.spacing()` le da `mt-6` a lo que sigue a un `subhead` — un título
+  pertenece a lo que viene abajo, no a lo que quedó arriba.
 
 Las dimensiones salen del header del PNG vía `imageSize()` en build time; no hay
 ratio escrito en ningún content file. Los nombres con espacio van por

@@ -1,24 +1,60 @@
 import type {
   SectionBlock,
+  SubheadBlock,
   ProseBlock,
   DecisionBlock,
   TradeoffBlock,
   QuoteBlock,
 } from "@/types/case-study";
+import { BUTTON_BASE, ACCENT_OUTLINE_BUTTON } from "../CaseLinks";
 
-/* Section intro — the heading and lead copy under a section divider. */
+/* Section intro — the heading and lead copy under a section divider.
+
+   The optional action sits on the title's line and is pushed to the content
+   edge, so it lands on the same vertical as the right edge of the frames below
+   it. It is an accent outline button at the same size as the hero's secondary
+   buttons: as a bare mono link it carried no weight against a 36px serif title
+   and disappeared into the canvas. Outline rather than filled keeps it under
+   the hero's solid Live demo, which is still the page's primary ask. */
 export function SectionIntro({ block }: { block: SectionBlock }) {
   if (!block.title && !block.body) return null;
 
   return (
-    <div className="max-w-3xl">
+    <div>
       {block.title && (
-        <h2 className="font-serif text-3xl lg:text-4xl text-fg mb-8 leading-tight">
-          {block.title}
-        </h2>
+        <div className="flex flex-col items-start sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-8 mb-8">
+          <h2 className="font-serif text-3xl lg:text-4xl text-fg leading-tight max-w-3xl">
+            {block.title}
+          </h2>
+          {block.action && (
+            <a
+              href={block.action.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`shrink-0 gap-2 ${BUTTON_BASE} ${ACCENT_OUTLINE_BUTTON}`}
+            >
+              {block.action.label}
+              <span aria-hidden>↗</span>
+            </a>
+          )}
+        </div>
       )}
-      {block.body && <Paragraphs body={block.body} />}
+      {block.body && (
+        <div className="max-w-3xl">
+          <Paragraphs body={block.body} />
+        </div>
+      )}
     </div>
+  );
+}
+
+/* A second heading inside a section. One step down from the section title, and
+   an h3 under its h2 — it names an artefact, it does not open a section. */
+export function Subhead({ block }: { block: SubheadBlock }) {
+  return (
+    <h3 className="font-serif text-2xl lg:text-3xl text-fg leading-tight max-w-3xl">
+      {block.title}
+    </h3>
   );
 }
 

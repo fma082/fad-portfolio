@@ -7,7 +7,7 @@ import path from "node:path";
    never restated in the content files, so replacing an asset with one of a
    different shape needs no edit anywhere else.
 
-   PNG and JPEG only — the two formats in this repo. Anything else, or an
+   PNG, JPEG and GIF — the three formats in this repo. Anything else, or an
    unreadable file, falls back to 16:9 rather than breaking the build. */
 
 type Size = { width: number; height: number };
@@ -53,6 +53,15 @@ function readJpeg(buffer: Buffer): Size | null {
   return null;
 }
 
+/* The logical screen descriptor sits right after the 6-byte signature, and it
+   is little-endian — the one header in this file that is. */
+function readGif(buffer: Buffer): Size | null {
+  if (buffer.length < 10) return null;
+  const signature = buffer.subarray(0, 3).toString("latin1");
+  if (signature !== "GIF") return null;
+  return { width: buffer.readUInt16LE(6), height: buffer.readUInt16LE(8) };
+}
+
 /* `src` is a public-relative URL, e.g. "/images/projects/x/Dashboard.png". */
 export function imageSize(src: string): Size {
   const cached = cache.get(src);
@@ -62,7 +71,7 @@ export function imageSize(src: string): Size {
   try {
     const file = path.join(process.cwd(), "public", decodeURIComponent(src));
     const buffer = readFileSync(file);
-    size = readPng(buffer) ?? readJpeg(buffer) ?? FALLBACK;
+    size = readPng(buffer) ?? readJpeg(buffer) ?? readGif(buffer) ?? FALLBACK;
   } catch {
     /* Missing or unreadable — the fallback keeps the page rendering. */
   }

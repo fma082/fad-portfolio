@@ -36,11 +36,20 @@ const { published, alternate, drift, layers, openingChain } = f.tokens;
 const SHOT = (name: string) =>
   `/images/projects/fluuen/${encodeURIComponent(name)}.png`;
 
+/* Its own constant rather than SHOT(): that helper appends `.png`, and this
+   one has to stay a GIF. ImageFrame serves animated sources unoptimized. */
+const BUILDER_RUN = "/images/projects/fluuen/builder-run.gif";
+
 const divergenceCount = drift.cssOnly + drift.figmaOnly;
 
 const inspectorTokens = drift.groups.find((g) => g.key === "I")!.count;
 
 const demoHref = f.links.find((l) => l.id === "demo")!.href;
+
+/* Two destinations, not one. The cover CTA and the sticky bar open the demo
+   home; the two CTAs that sit next to builder evidence deep-link straight into
+   the builder, which readers were not reaching from the home. */
+const builderHref = f.links.find((l) => l.id === "builder")!.href;
 
 /* Looked up by id rather than by index: the ids are stable in the data file,
    the array order is not guaranteed to stay that way. */
@@ -141,7 +150,7 @@ const findings: Block[] = [
     type: "cta",
     body: "Build an agent yourself in the demo.",
     label: "Open the builder →",
-    href: demoHref,
+    href: builderHref,
   },
   {
     type: "section",
@@ -287,19 +296,28 @@ const live: Block[] = [
     num: "06",
     label: "Live",
     title: "See it running",
+    /* The section's one CTA. It used to sit under the recording as a tinted
+       panel; on the title line it reads as the section's own affordance
+       instead of as a second ask after the one in 02. */
+    action: { label: "Open the builder", href: builderHref },
   },
+  /* The recording first, then the file. The Run Detail capture used to sit
+     here and came out: a still timeline of a finished run says less than the
+     run itself, and two views of the same execution read as repetition. */
+  {
+    type: "image",
+    src: BUILDER_RUN,
+    alt: "A recording of the Fluuen agent builder running a workflow: an Invoice Processing agent advances step by step from its Email Received trigger through Read Email, Extract Data and a Check Amount condition, each node highlighting as it executes and the extracted values filling in",
+    caption: "The builder mid-run.",
+  },
+  /* The second artefact of the section gets named rather than appearing loose
+     under the recording. */
+  { type: "subhead", title: "The published file" },
   {
     type: "figmaEmbed",
     url: link("figma")!,
     caption: `${f.source.figmaFileName} — ${published.total} colour variables across ${layers.length} collections`,
     height: 640,
-  },
-  {
-    type: "image",
-    src: SHOT("Run Detail"),
-    alt: "A Fluuen run detail view: a timeline of executed steps, each with its status, duration and logged output",
-    caption: "Run detail — execution timeline, step by step",
-    tag: "New",
   },
 ];
 

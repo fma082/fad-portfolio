@@ -253,7 +253,7 @@ export interface NodeStructure {
 }
 
 export interface ProjectLink {
-  id: "figma" | "repo" | "tokensRepo" | "demo" | "storybook";
+  id: "figma" | "repo" | "tokensRepo" | "demo" | "builder" | "storybook";
   label: string;
   href: string;
   /** Reachable without credentials, checked 2026-08-04. */
@@ -412,6 +412,14 @@ const links: ProjectLink[] = [
     href: "https://fluuen.vercel.app",
     public: true,
     linked: true,
+  },
+  {
+    id: "builder",
+    label: "Agent builder — fluuen.vercel.app/agents/agent-01/builder",
+    href: "https://fluuen.vercel.app/agents/agent-01/builder",
+    public: true,
+    linked: true,
+    note: "Deep link into the builder of a seeded agent. Vercel analytics showed readers landing on the demo home and not reaching the builder, which is the most persuasive surface in the product — so the two CTAs that sit next to builder evidence skip the home and open this. The demo home stays the destination for the cover CTA and the sticky bar.",
   },
   {
     id: "storybook",

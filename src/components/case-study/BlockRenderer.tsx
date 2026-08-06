@@ -3,6 +3,7 @@ import { ImageFrame } from "./ImageFrame";
 import { ImageGrid } from "./ImageGrid";
 import {
   SectionIntro,
+  Subhead,
   Prose,
   DecisionBox,
   TradeoffBox,
@@ -29,6 +30,8 @@ export function BlockRenderer({ block }: { block: Block }) {
   switch (block.type) {
     case "section":
       return <SectionIntro block={block} />;
+    case "subhead":
+      return <Subhead block={block} />;
     case "prose":
       return <Prose block={block} />;
     case "decision":

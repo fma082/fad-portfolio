@@ -27,6 +27,8 @@ const isMedia = (block: Block) =>
 function spacing(current: Block, previous: Block | undefined): string {
   if (!previous) return "";
   if (isMedia(current) && isMedia(previous)) return "mt-4";
+  /* A heading belongs to what follows it, not to what it sits under. */
+  if (previous.type === "subhead") return "mt-6";
   if (current.type === "chips") return "mt-10";
   return "mt-14 lg:mt-16";
 }

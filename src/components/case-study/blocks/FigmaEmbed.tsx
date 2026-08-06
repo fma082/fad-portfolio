@@ -55,8 +55,11 @@ export function FigmaEmbed({ block }: { block: FigmaEmbedBlock }) {
   return (
     <figure className="rounded-xl border border-border bg-card overflow-hidden">
       <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-border">
+        {/* Shared closing pattern: a case study with a Figma file ends on the
+            file itself. The header names what the reader is looking at — the
+            published artefact — rather than the tool hosting it. */}
         <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-fg-faint">
-          Figma — Live file
+          The file, as it&rsquo;s published
         </span>
         <a
           href={block.url}
@@ -65,6 +68,7 @@ export function FigmaEmbed({ block }: { block: FigmaEmbedBlock }) {
           className="font-mono text-[10px] tracking-[0.2em] uppercase text-(--accent) hover:text-fg transition-colors duration-200 shrink-0"
         >
           Open in Figma
+          <span aria-hidden> ↗</span>
         </a>
       </div>
 

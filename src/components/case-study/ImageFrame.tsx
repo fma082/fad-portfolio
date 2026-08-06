@@ -9,6 +9,12 @@ export type ImageFrameProps = {
   sizes?: string;
 };
 
+/* The optimizer re-encodes to a still frame, so an animated source has to be
+   served as-is. `unoptimized` is the documented way to say that: same <img>,
+   same width/height, but the raw file at `src` instead of a /_next/image URL.
+   A GIF that loses its animation looks like a mistakenly placed screenshot. */
+const ANIMATED = /\.gif$/i;
+
 export function ImageFrame({
   src,
   alt,
@@ -20,6 +26,7 @@ export function ImageFrame({
      ratio letterboxed anything that was not 16:9 — dashboard captures are
      nearly square, and documentation sheets are far taller than they are wide. */
   const { width, height } = imageSize(src);
+  const animated = ANIMATED.test(src);
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -29,6 +36,7 @@ export function ImageFrame({
         width={width}
         height={height}
         sizes={sizes}
+        unoptimized={animated}
         className="block w-full h-auto"
       />
 

@@ -79,11 +79,14 @@ export function CaseHero({
 
         {children}
 
-        {/* Stats bar — auto-fit so four or five stats both sit on one row */}
+        {/* Stats bar — auto-fit so four or five stats both sit on one row.
+            The figures are plain text-fg: size and the mono face already make
+            them the loudest thing in the row, and the accent is spent on the
+            title and the demo CTAs instead. */}
         <div className="grid grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] divide-x divide-border border-t border-border -mx-6 lg:-mx-12 px-6 lg:px-12">
           {stats.map(({ value, label }) => (
             <div key={label} className="py-6 px-3 first:pl-0 last:pr-0">
-              <p className="font-mono text-2xl lg:text-3xl font-medium leading-none mb-1.5 text-(--accent)">
+              <p className="font-mono text-2xl lg:text-3xl font-medium leading-none mb-1.5 text-fg">
                 {value}
               </p>
               <p className="font-mono text-[10px] text-fg-faint uppercase tracking-wider">
