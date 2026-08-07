@@ -396,7 +396,7 @@ const links: ProjectLink[] = [
     href: "https://www.figma.com/design/MOhVXH1k1Aa5tbQJM8QDRF",
     public: true,
     linked: true,
-    note: "Cited at stories/foundations.mdx:10 and read live on 2026-08-04. Figma answers 403 to an unauthenticated HTTP request, which it does for public files too — so the public URL was not confirmed end to end. Open it in a logged-out browser before publishing.",
+    note: "Cited at stories/foundations.mdx:10 and read live on 2026-08-04. Publicly viewable, confirmed by Facundo on 2026-08-07: sharing is set to anyone-with-the-link, view only. Do not re-verify it over HTTP — Figma answers 403 to unauthenticated requests for public and private files alike, so a 403 proves nothing either way; it takes a logged-out browser. There is a second file, cmoQRZQiTI9MGrc5j9LjVX, named 'Fluuen Design System (Public)' — a copy, identical to this one row by row (see the H3b falsification in docs/briefs/fluuen-token-drift-summary.md). It is NOT the file to link: on 2026-08-07 Facundo chose to keep this one everywhere and repoint Behance at it, so that one artefact is shared from every channel and no copy can go stale against the original. Do not 'fix' this href to the copy.",
   },
   {
     id: "tokensRepo",

@@ -170,6 +170,25 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
   - **Los pills van `justify-self-start`**, no `end`. El track mide exactamente
     lo que el pill más ancho, así que alinearlos por la izquierda los pone a
     todos en una vertical y la tabla igual termina en su borde derecho.
+- **El Figma que se comparte es el original, no la copia pública** (2026-08-07).
+  Hay dos archivos: `MOhVXH1k1Aa5tbQJM8QDRF` ("Fluuen Design System") y
+  `cmoQRZQiTI9MGrc5j9LjVX` ("Fluuen Design System (Public)"), **idénticos fila
+  por fila** — es la hipótesis H3b del análisis de drift, falsada midiendo los
+  dos (848 en ambos). Facundo venía compartiendo la copia por Behance; la
+  decisión fue **quedarse con el original en todos lados y repuntar Behance a
+  él**, no al revés. Razón: un solo artefacto compartido desde todos los canales,
+  y ninguna copia que se desactualice contra el original mientras se sigue
+  editando — que es la tesis de la propia case study.
+  La entrada `figma` de `_data/links` gobierna **las dos** superficies: el botón
+  del hero y el embed de la 06. Si alguna sesión futura encuentra el archivo
+  "(Public)" y "corrige" el href, eso es el regreso.
+  **Verificado el 2026-08-07**: el archivo es visible públicamente, con el
+  compartir en "cualquiera con el link, solo lectura". El embed de la 06 y el
+  botón del hero funcionan para un visitante sin cuenta.
+  **No lo re-verifiques por HTTP.** Figma responde 403 sin autenticar tanto para
+  archivos públicos como privados, y un browser headless con perfil limpio se
+  come un 403 de CloudFront antes de que se evalúen permisos: un 403 no prueba
+  nada en ninguna dirección. La única prueba válida es abrirlo en incógnito.
 - **Una case study con Figma cierra con el archivo, titulado "The file, as
   it's published"** (2026-08-06). Patrón **compartido** entre Fluuen y Design
   System: la última sección es el embed, y el header dice qué está mirando el
@@ -383,6 +402,36 @@ Tres proyectos: **Fluuen** (destacada, violet) · **Countersign** (teal) ·
 no un proyecto aparte. `bloyal` salió del portfolio (era trabajo con NDA) y
 `ai-patterns` no va como case study propia: ese research se absorbe como
 sección 01 de Countersign.
+
+**La card toma la forma del cover, no al revés** (2026-08-07). Las dos
+proporciones existen para que un cover exportado de un archivo de diseño entre
+sin recorte: `aspect-4/3` en las cards de la grilla, **`aspect-16/9` en la
+destacada**. La destacada era `aspect-21/9` hasta que llegó el cover de Fluuen.
+Se probaron las dos salidas y ganó cambiar la card:
+
+- Rehacer el cover a 2520×1080 (21:9) **se descartó en Figma**: a esa proporción
+  quedaba demasiado aire a los costados y la composición se caía.
+- Meter el cover 16:9 en una card 21:9 recortaba **23,7% del alto** —256px arriba
+  y 256px abajo— y lo que se comía era exactamente lo que identifica la pieza:
+  el logo `fluuen` entero arriba, y abajo la mitad de la fila de créditos, que
+  dejaba "Designed in", "Built with" y "Live on" colgadas sin su palabra.
+
+Verificado después del cambio: **recorte 0%** en desktop (1182×665) y en mobile
+(340×191). El 0,17% que reporta mobile es redondeo entero del resize de
+`next/image` (390×219 = 1,7808 contra 1,7778), no un recorte real.
+**Un cover nuevo tiene que coincidir exacto con la proporción de su card.**
+
+`Cover.png` de Fluuen va **con C mayúscula** — es el nombre en disco y así lo
+referencia `page.tsx`. macOS resolvería `cover.png` igual; el filesystem de
+Vercel no, y ese 404 aparece solo en producción. Ojo que `design-system/cover.png`
+es minúscula: la convención no es uniforme, así que copiá el nombre real, no el
+patrón.
+
+**Escalas a las que se ve un cover de card destacada**, para dimensionar tipografía:
+desktop 1182px de ancho, mobile 340px. Contra un frame de 3840, eso es 0,31× y
+0,089×. Todo lo que esté abajo de ~120px en el frame es textura en mobile, no
+información — los labels de los nodos y la fila de créditos del cover de Fluuen
+caen ahí, y está bien porque el título es el que sostiene la pieza.
 
 **El destino de cada card es una union discriminada**, no un slug suelto:
 

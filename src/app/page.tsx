@@ -118,6 +118,9 @@ const projects: Project[] = [
        links all four artefacts — Figma, token repo, demo, Storybook — and frames
        them, which the bare Storybook link could not do. */
     link: { kind: "case", slug: "fluuen" },
+    /* Capital C is the filename on disk. macOS would resolve "cover.png" too;
+       Vercel's Linux filesystem would not, and it 404s only in production. */
+    thumb: "/images/projects/fluuen/Cover.png",
   },
   {
     title: "Countersign",
@@ -183,12 +186,18 @@ function ProjectCard({
       {/* Preview — cover image when the project has one, accent gradient when
           it does not. `alt` is empty on purpose: the card title right below
           already names the link, so a description here would be read twice. */}
-      {/* 4:3 rather than 16:9 so a cover exported from a design file fits
-          without cropping. The Design System cover is padded to that ratio in
-          its own background colour, so `object-cover` has nothing to cut. */}
+      {/* Both ratios exist so a cover exported from a design file fits without
+          cropping — the card takes the shape of the artwork, not the reverse.
+          4:3 for the grid cards (the Design System cover is padded to it in its
+          own background colour); 16:9 for the featured one, which was 21/9
+          until the Fluuen cover arrived: at 21:9 the frame left so much empty
+          space at the sides in Figma that the composition fell apart, and
+          cropping a 16:9 cover into it cut the wordmark off the top and sliced
+          the credits row in half. `object-cover` now has nothing to cut on
+          either. A new cover has to match its card's ratio exactly. */}
       <div
         className={`relative overflow-hidden border-b border-border ${
-          featured ? "aspect-21/9" : "aspect-4/3"
+          featured ? "aspect-16/9" : "aspect-4/3"
         }`}
       >
         {thumb ? (
