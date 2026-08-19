@@ -20,7 +20,9 @@ function groupBySection(blocks: Block[]): Group[] {
 }
 
 const isMedia = (block: Block) =>
-  block.type === "image" || block.type === "imageGrid";
+  block.type === "image" ||
+  block.type === "video" ||
+  block.type === "imageGrid";
 
 /* Vertical rhythm: consecutive media sit tight, chips hug the paragraph above
    them, everything else gets a full section step. */

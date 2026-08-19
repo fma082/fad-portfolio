@@ -127,11 +127,24 @@ const projects: Project[] = [
     tags: ["AI UX", "Agent Governance", "Research", "Next.js"],
     type: "Personal product · AI agent governance · 2026",
     desc: "An AI agent that runs reads on its own, pauses after reversible writes, and stops for a human before destructive ones. Friction before or friction after, never both.",
-    accent: "teal",
-    /* Not linked on purpose: the demo carries state shared across visitors and
-       /scenario never says the data is fictional. That needs a line of framing
-       the home page has nowhere to put. */
-    link: { kind: "none", label: "Case study in progress" },
+    /* Warm off-white, not a hue: Countersign's surface reserves green, amber
+       and red for safe / reversible / destructive, and a brand colour beside
+       them would read as a fourth meaning. */
+    accent: "bone",
+    /* Was deliberately unlinked while /scenario had no fictional-data notice
+       and the home page had nowhere to put one. The case study is that place:
+       every CTA on it opens the demo next to a line that says Northbase is
+       invented. */
+    link: { kind: "case", slug: "countersign" },
+    /* Captured 2026-08-18 by `_inbox/demo-capture/cover.mjs` in the Countersign
+       repo: the real app, production build, Groq, driven over CDP — the same
+       pipeline as the stills inside the case study. 2880x2160, exactly 4:3, so
+       `object-cover` has nothing to crop.
+       The state is the approval gate open and pending, with the reversible
+       write from the step before it still undoable above: two of the three
+       tiers in one frame, and the only thing on screen an ordinary admin panel
+       would never show. */
+    thumb: "/images/projects/countersign/cover.png",
   },
   {
     title: "Dashboard Design System",

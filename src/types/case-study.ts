@@ -68,6 +68,21 @@ export type TradeoffBlock = { type: "tradeoff"; title: string; body: string };
 
 export type ImageBlock = { type: "image" } & CaseImage;
 
+/* A silent screen recording, played as video rather than served as a GIF: the
+   same ten seconds cost a fraction of the bytes and the browser decodes it on
+   the GPU. Muted and playsinline, so it autoplays under every mobile policy.
+   Dimensions come from the file's track header at build time, exactly as an
+   image's do, so the frame reserves its own height. */
+export type VideoBlock = {
+  type: "video";
+  src: string;
+  /* Described rather than labelled: nothing here is decorative, and a reader
+     who cannot see it gets this instead. */
+  alt: string;
+  caption?: string;
+  tag?: string;
+};
+
 export type ImageGridBlock = {
   type: "imageGrid";
   images: [CaseImage, CaseImage];
@@ -188,6 +203,51 @@ export type NodeDemoBlock = {
   caption?: string;
 };
 
+/* ─── Governance blocks ──────────────────────────────────────────────────── */
+
+/* The defect that opened a case study, drawn rather than described: what the
+   request asked for, what the model actually reached for, and the line that
+   says why the distance between them matters. Two steps, never three — the
+   whole point is that the second one is one hop away from the first. */
+export type BugFlowBlock = {
+  type: "bugFlow";
+  asked: { label: string; value: string };
+  /* Rendered in the destructive colour: this is the box the page is about. */
+  reached: { label: string; value: string };
+  /* The consequence. `emphasis` is the fragment printed in the destructive
+     colour inside it, and it has to appear in `body` verbatim or it is ignored
+     — Prose does not parse markdown and neither does this. */
+  punchline: { body: string; emphasis?: string };
+};
+
+/* How much friction an action costs, as a function of how hard it is to undo.
+   `tone` names the meaning, never the colour: the component maps safe/
+   reversible/destructive onto the green, amber and red tokens. A tier that
+   arrives carrying a hex is a regression. */
+export type TierTone = "safe" | "reversible" | "destructive";
+
+export type TierGridBlock = {
+  type: "tierGrid";
+  tiers: { tone: TierTone; label: string; body: string; emphasis?: string }[];
+};
+
+/* Failures observed against a real model, paired with the change that closed
+   each one. Two columns and no third: the case study's claim is that a fix is
+   a change to the surface, so a "root cause" column would be the prompt
+   column, and there isn't one. */
+export type EvidenceTableBlock = {
+  type: "evidenceTable";
+  /* Column headings, so a case can call them something other than failure and
+     fix without the component learning about it. */
+  headings?: { failure: string; fix: string };
+  rows: {
+    failure: string;
+    failureEmphasis?: string;
+    fix: string;
+    fixEmphasis?: string;
+  }[];
+};
+
 /* Inline call to action — one line and a link, placed where the page has just
    earned it. Quiet by construction: no filled button, no box. */
 export type CtaBlock = {
@@ -256,11 +316,15 @@ export type Block =
   | DecisionBlock
   | TradeoffBlock
   | ImageBlock
+  | VideoBlock
   | ImageGridBlock
   | MetricsBlock
   | QuoteBlock
   | CardGridBlock
   | ChipsBlock
+  | BugFlowBlock
+  | TierGridBlock
+  | EvidenceTableBlock
   | TokenTableBlock
   | ComponentInventoryBlock
   | VariantMatrixBlock

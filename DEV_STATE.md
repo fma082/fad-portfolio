@@ -3,7 +3,7 @@
 Estado vivo del proyecto. Claude Code: leé esto al empezar cada sesión.
 Actualizalo al cerrar una fase o después de una decisión de arquitectura.
 
-Última actualización: 2026-08-06
+Última actualización: 2026-08-18
 
 ---
 
@@ -294,6 +294,146 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
     por índice, no por pseudo-clase.
   - `CaseHero` pasó de `md:grid-cols-4` a `md:grid-cols-[repeat(auto-fit,…)]`
     en la barra de stats, para que 4 o 5 stats entren igual en una fila.
+- **Un accent puede no ser un color** (2026-08-18). Countersign tiene
+  `accent: "bone"` — un off-white cálido `#E8E4DB`, el séptimo miembro de
+  `AccentToken`. No es una excepción al sistema, es la razón por la que el
+  sistema tiene un slot: en esa case study el **verde, el ámbar y el rojo
+  significan** safe / reversible / destructivo, y un accent con tono habría
+  competido con las tres únicas cosas de la página que dicen algo por estar
+  coloreadas. Es además la paleta real del demo — la captura de la cover y el
+  botón sólido del hero salen del mismo lugar del espacio de color.
+  Medido: `#E8E4DB` como relleno con `text-canvas` da 17,3:1, muy por encima de
+  los 4,5:1; como borde sobre canvas, lo mismo. Es el accent más contrastado de
+  los siete, no el más débil.
+  **El canvas NO se forkea, y eso quedó cerrado el 2026-08-18.** El prototipo
+  pinta toda la escala en cálido (`#0A0A09` canvas, `#1A1815` card, `#EDEBE6`
+  fg); la diferencia contra la escala global es de 1 a 4 puntos por canal,
+  invisible al ojo, y forkear `--color-canvas` por caso metería una segunda
+  escala de superficies en un repo que tiene una.
+  **Los funcionales son los tokens que ya existían** (`green` `#34D399`,
+  `amber` `#FBBF24`, `red` `#F87171`), no los del prototipo (`#7F9968`,
+  `#E0A63C`, `#E5735C`). El razonamiento de Facundo al cerrarlo: el
+  warm-neutral del prototipo era una **aproximación suya**, y los tres hex
+  desaturados solo existían para convivir con un canvas cálido — **si el canvas
+  no cambia, desaturarlos pierde sentido.** El único sobreviviente del
+  warm-neutral es `bone`, que sí se queda porque es el color real del producto.
+  Si alguna sesión futura "completa" la paleta cálida del prototipo, eso es el
+  regreso.
+- **El cover de la card se captura, no se recorta** (2026-08-18).
+  `public/images/projects/countersign/cover.png` es **2880×2160, 4:3 exacto**,
+  así que el `object-cover` de `ProjectCard` no recorta nada. Salió del mismo
+  pipeline que las capturas de adentro del caso: app real, build de producción,
+  Groq, manejada por CDP. El script nuevo es
+  **`_inbox/demo-capture/cover.mjs` en el repo de Countersign**, al lado de
+  `shots.mjs` y `record.mjs`, y difiere de `shots.mjs` en dos cosas: viewport
+  1440×1080 en vez de 1440×900, y corta en el gate en vez de seguir hasta el
+  read libre.
+  **El estado elegido es el gate abierto y pendiente**, con la escritura
+  reversible del paso anterior todavía deshacible arriba: dos de los tres tiers
+  en un solo frame, y lo único en pantalla que un admin panel común no mostraría.
+  Reencuadrar `guided.png` (16:10) no era opción — la nota de `ProjectCard` dice
+  que un cover nuevo matchea el ratio de su card, no al revés.
+- **⚠️ El modelo del deploy de Countersign está dado de baja** (verificado
+  2026-08-18). Groq decomisionó **toda la familia llama-3.x**; el
+  `llama-3.1-8b-instant` que pide el deploy devuelve `404 model_not_found`.
+  Consecuencia: **todos los turnos caen por el camino de retry→degradación** y
+  renderizan la card `MODEL PAUSED`, que corre la tool server-side y lo declara.
+  La gobernanza, el resolver y el gate siguen funcionando — lo que no es de un
+  modelo es la narración.
+  Se descubrió capturando el cover: dos corridas independientes dieron PNGs
+  **byte a byte idénticos**, que contra un LLM streameando es imposible.
+  **Esto le pega a la copy de la case study**, que salió del prototipo aprobado:
+  la 05 dice *"Real: the agent runs against a real model"* y el CTA de la cover
+  dice *"This runs against a real model"*. Las dos son **verdaderas del proyecto
+  y falsas del deploy** hasta que se actualice el model id en Countersign y en
+  Vercel. **La copy no se ablanda: se arregla el modelo.** Guardado en
+  `_data/countersign.ts` → `unsupported[0]`.
+  Modelos vivos con esa API key al 2026-08-18: `openai/gpt-oss-20b`,
+  `openai/gpt-oss-120b`, `qwen/qwen3.6-27b`, `groq/compound`.
+
+  **ARREGLADO en el repo de Countersign el 2026-08-18** (falta el deploy):
+  - `groq.ts` ahora defaultea a `openai/gpt-oss-20b`. **Vercel nunca seteó
+    `GROQ_MODEL`** —el deploy usaba el default del código— así que no hay env
+    var que tocar: el próximo deploy toma el modelo nuevo solo. Se decidió **no**
+    agregar `GROQ_MODEL` a Vercel: volvería a poner el modelo en dos lugares,
+    que es el bug que se está cerrando.
+  - Verificado con `_inbox/demo-capture/verify-guided.mjs`, un script nuevo:
+    **15/15** contra el build de producción. Los dos reads, `update_price`
+    badgeado `ok` con Undo en la acción, el gate parando en `awaiting approval`
+    con 6 ítems, y **cero cards MODEL PAUSED**. Esa última es la que importa: el
+    flujo "pasa" igual con la degradación, y por eso el script **falla** si
+    aparece.
+  - **El pie del composer ya no puede mentir.** `provider-info.ts` se borró
+    entero. `MODEL_LABEL` era un `NEXT_PUBLIC_MODEL_PROVIDER` leído en build
+    time con el nombre del modelo **hardcodeado al lado**, así que el pie
+    imprimió `llama-3.1-8b-instant` durante meses contra un modelo muerto, y
+    siguió imprimiéndolo mientras una corrida usaba gpt-oss-20b. Ahora
+    `/scenario` —que ya es `force-dynamic`— resuelve `{provider, name}` desde el
+    adapter vivo (`provider.ts` re-exporta `adapter.MODEL`) y lo baja por prop
+    hasta el `Composer`, que lo imprime verbatim. Es el mismo principio que
+    gobierna todo lo demás de esa página: **el server resuelve, el cliente
+    refleja**. El tipo es `ModelIdentity` en `engine/types.ts`.
+    `NEXT_PUBLIC_MODEL_PROVIDER` quedó muerto — marcado en `.env.local`, y se
+    puede borrar del proyecto de Vercel.
+  - **Las cinco capturas Y el video se regeneraron** con el modelo nuevo: el pie
+    de todos dice `Groq · openai/gpt-oss-20b`. Verificado recortando la banda del
+    pie de cada PNG con ffmpeg y extrayendo frames del MP4 — no mirando la
+    captura entera, donde el pie es ilegible.
+    El video salió del mismo `record.mjs` + `encode.mjs --skip-gif`, mismo
+    encuadre y mismo prompt (`change the NB-AU-1004 price to $200`). Quedó de
+    4,88 s contra 7,54 s del anterior: el turno fue más corto porque el modelo
+    respondió más rápido, y el encode usa el timeline real. Sigue siendo fiel al
+    caption — el write corre, el precio viejo queda tachado, y Undo sobrevive.
+  - **Falta el deploy.** El arreglo está en el repo de Countersign, sin commitear
+    y sin deployar. Hasta que Facundo lo publique, `countersign-ai.vercel.app`
+    sigue degradado y los tres CTAs de esta case study abren un demo donde el
+    modelo no narra. **La copy no se toca; se deploya.**
+  - **Flake conocido, no arreglado:** `record.mjs` falló 4 veces seguidas en el
+    paso 04 (el modelo ruteó el prompt destructivo a otra cosa y completó, sin
+    abrir el gate) y salió a la quinta, mientras `shots.mjs`, `cover.mjs` y
+    `verify-guided.mjs` abrieron el gate 4 de 4. Es el routing no determinista
+    que el brief registra como observación cualitativa — ahora con una frecuencia
+    aproximada sobre gpt-oss-20b, que vale la pena medir en serio.
+- **Un GIF de producto se sirve como MP4** (2026-08-18). La grabación del tier
+  reversible existía en las dos formas: `price-update-dark.gif` (2,6 MB) y
+  `price-update-dark-retake.mp4` (1,0 MB), los mismos ~7,5 s. Va el MP4, por el
+  bloque `video` → `VideoFrame`: `autoplay loop muted playsinline`, mismo shell
+  que `ImageFrame` (borde, radio, barra de caption), y **sin pasar por
+  `next/image`**, así que no hace falta nada del tratamiento `unoptimized` que
+  sí necesita un GIF. `muted` + `playsinline` son estructurales —son lo que hace
+  legal el autoplay en iOS y en Chrome—, por eso no son props.
+  `imageSize()` ahora **también lee MP4**: el `tkhd` de ISO BMFF, width/height en
+  punto fijo 16.16, big-endian. Lee *todos* los `tkhd` del archivo y se queda con
+  el más ancho, porque una pista de audio reporta 0x0. Verificado: 1200×750, y
+  el `<video>` reserva su altura igual que un `<img>`.
+  **El GIF se borró el 2026-08-18** (`public/images/projects/countersign/price-update-dark.gif`,
+  2,6 MB, sin una sola referencia). Sigue existiendo en el repo de Countersign,
+  junto con `price-update-dark.mp4` y `price-update-dark-light.gif` — ese repo
+  no se tocó.
+- **Los tres bloques nuevos de Countersign llevan `emphasis`, y eso no reabre el
+  parser** (2026-08-18). `bugFlow`, `tierGrid` y `evidenceTable` aceptan un campo
+  `emphasis` con un fragmento que se busca **verbatim** en el body y se pinta.
+  No es markdown y no es un parser: es un `indexOf` + un `slice`, un solo corte,
+  y un fragmento que no matchea se ignora en silencio y el texto sale plano.
+  Existe porque en esos tres bloques la cláusula enfatizada **es** el contenido
+  —la mitad roja del remate, la regla del tier, la forma del fix— y sostenerla
+  por posición, como hace `Prose`, perdería el argumento.
+  **`Prose` sigue sin parsear nada** y eso no se tocó: el párrafo-tesis de la 00
+  y los cuatro labels de la 05 (Real / Code-first / Fictional / My role) van en
+  texto plano, en negrita en el prototipo, sostenidos por la posición. Misma
+  regla que Done/Partial/Debt en la 05 de Fluuen.
+- **`tierGrid` recibe un significado, nunca un color** (2026-08-18). El campo es
+  `tone: "safe" | "reversible" | "destructive"` y el mapa a `text-green` /
+  `text-amber` / `text-red` vive en el componente. Un tier que llegue con un hex
+  desde el content file es el regreso que ese mapa existe para evitar.
+  Ojo con Tailwind v4: `text-green` y `border-red` no los usaba nadie antes de
+  este caso. Verificado en el build de producción que los tres sobreviven al
+  pruning, igual que hay que verificar `[data-accent="bone"]`.
+- **`invalid` no entra en la grilla de tiers** (2026-08-18). `ToolDecision` tiene
+  cuatro miembros; la case study publica tres. `invalid` es un rechazo por
+  argumentos malos, no un nivel de fricción, y meterlo en una escala sobre lo
+  difícil que es deshacer algo lo archivaría mal. Está en `_data` con
+  `published: false`, que es también de dónde sale el `3` de la barra de stats.
 
 ---
 
@@ -318,7 +458,9 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
       `TODO: copy needed` (ver abajo).
 - [x] Bloques de sistema (2026-08-04): `tokenChain`, `codePeek`,
       `divergenceTable`. `CodePeek` estaba en la lista de pendientes de arriba.
-- [ ] Case study: Countersign.
+- [x] Case study: Countersign (`/work/countersign`) — 2026-08-18. Bloques
+      nuevos: `video`, `bugFlow`, `tierGrid`, `evidenceTable`. Accent nuevo:
+      `bone`. Card de la home linkeada.
 
 ---
 
@@ -346,10 +488,13 @@ Claude Code no puede inventar esto. Si falta, dejar `{/* TODO: copy needed */}`.
 | Proyecto      | Brief escrito | Figma | Repo | Demo |
 | ------------- | ------------- | ----- | ---- | ---- |
 | Fluuen        | ✅            | ✅    | 🔒   | ✅   |
-| Countersign   | ❌            | —     | ✅   | ✅   |
+| Countersign   | ✅            | —     | ✅   | ✅   |
 | Design System | ❌            | ✅    | —    | —    |
 
-Los briefs van en `docs/briefs/[proyecto].md`.
+Los briefs van en `docs/briefs/[proyecto].md`. Countersign tiene tres:
+`countersign.md` (lectura del repo), `countersign-decisions.md` (decisiones, y
+la §6.2 que arbitra cada número que circuló en dos versiones) y
+`countersign-case-study-prototype.html` (la referencia visual aprobada).
 
 🔒 **El repo del producto de Fluuen (`fma082/fluuen`) es privado** — confirmado
 2026-08-04, la API de GitHub devuelve 404 sin credenciales. La case study no lo
@@ -560,6 +705,19 @@ fallback. Ese documento se escribió antes de que existiera el producto y nunca
 se reconcilió. La columna de deuda abierta de la sección 05 son las cuatro cosas
 verificadas, no la lista de features que no se construyeron.
 
+### Pendiente en `/work/countersign` (2026-08-18)
+
+Nada bloquea la página: las 7 secciones están completas y ningún
+`TODO: copy needed` quedó abierto. Lo que sí queda:
+
+- **`.DS_Store` está commiteado** en esa carpeta de assets.
+- **Números verificados que la página NO publica**, guardados igual en `_data`
+  porque el prototipo no les dio lugar: el ancho del panel (380 spec / 379
+  construido), los 6 sales vencidas, los 3 vendiendo bajo costo, el throttle de
+  28ms, y las cuatro afirmaciones del array `unsupported` que **no hay que
+  sostener** (umbrales de loading tuneados, statechart como contrato con Figma,
+  routing no determinista con número, `next build` limpio en 5 rutas).
+
 ### Pendiente en `/work/design-system`
 
 - **Las 4 pantallas ya están** en `public/images/projects/design-system/`.
@@ -583,6 +741,42 @@ si alguna vez hacen falta.
 
 ## Deploy
 
-`main` → producción en Vercel.
-Cualquier otra branch → preview deploy con URL propia.
-Trabajar en branches: te deja ver el resultado deployado antes de tocar producción.
+**No existe ninguna branch `main`.** Esta sección decía "`main` → producción" y
+era falso; corregido el 2026-08-07 después de verificarlo contra el repo y contra
+el sitio en vivo. Si alguna sesión razona sobre un `main`, está razonando sobre
+una branch que no existe.
+
+| | |
+|---|---|
+| Branch default del repo | `claude/portfolio-nextjs-conversion-Hj9oO` |
+| Producción | `fad-portfolio-seven.vercel.app`, deploya de la default |
+| Último commit de la default | `d88af4d`, **2026-04-28** |
+| Branch de trabajo | `fase-2/case-study-engine` |
+
+**Producción está sirviendo el portfolio de abril y ninguna case study nueva.**
+Verificado el 2026-08-07: `/work/deftboard`, `/work/next-agent`, `/work/bloyal` y
+`/work/ai-patterns` responden 200 —los cuatro stubs que esta misma nota dice que
+se borraron el 2026-08-03, borrados en la branch y no en producción— y
+`/work/fluuen` y `/work/design-system` dan 404. La home de producción todavía
+habla de Deftboard y no menciona ni Fluuen ni Countersign.
+
+Toda la Fase 2 vive en `fase-2/case-study-engine`, **24 commits adelante** y
+**fast-forward puro**: contiene la default entera, cero commits divergentes. Se
+publica cuando Facundo lo decida — el 2026-08-07 eligió esperar a Countersign,
+que **está terminada desde el 2026-08-18**. La condición que difería la
+publicación ya no aplica; falta la decisión.
+Las opciones evaluadas fueron: mergear a la default, cambiar la Production Branch
+en Vercel, o crear un `main` de verdad y ponerlo de default.
+
+**Los previews están detrás de Deployment Protection.** Cualquier branch genera
+su preview, pero pedirlo sin sesión devuelve `<title>Login – Vercel</title>`, no
+la página. Para verificar un preview hay que abrirlo logueado, o generar un
+Shareable Link desde el dashboard. Un check por `curl` **no sirve** y un 200 ahí
+no significa que la página esté bien.
+
+**Cómo encontrar la URL de un preview**: no hay `.vercel/` linkeado local, así que
+sale de la API de deployments de GitHub —
+`gh api repos/fma082/fad-portfolio/deployments` para el id más reciente, y
+`.../deployments/<id>/statuses` para el `environment_url`. El alias lindo por
+branch no se puede adivinar: `fase-2/case-study-engine` tiene barra y guion y
+Vercel lo transforma a un slug que solo figura en el dashboard.

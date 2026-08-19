@@ -7,8 +7,13 @@ import path from "node:path";
    never restated in the content files, so replacing an asset with one of a
    different shape needs no edit anywhere else.
 
-   PNG, JPEG and GIF — the three formats in this repo. Anything else, or an
-   unreadable file, falls back to 16:9 rather than breaking the build. */
+   PNG, JPEG, GIF and MP4 — the four formats in this repo. Anything else, or an
+   unreadable file, falls back to 16:9 rather than breaking the build.
+
+   MP4 is here rather than in a file of its own because the caller's need is the
+   same one: a frame that takes the shape of its source instead of forcing a
+   ratio on it. `VideoFrame` reserves height from this exactly as `ImageFrame`
+   does. */
 
 type Size = { width: number; height: number };
 
@@ -62,6 +67,38 @@ function readGif(buffer: Buffer): Size | null {
   return { width: buffer.readUInt16LE(6), height: buffer.readUInt16LE(8) };
 }
 
+/* ISO base media: the track header carries display width and height as 16.16
+   fixed-point. A file has one `tkhd` per track, and an audio track reports
+   0x0 — so every header is read and the largest box wins, rather than the
+   first one found. `moov` is at the head in a web-ready file, but the scan does
+   not depend on that. */
+function readMp4(buffer: Buffer): Size | null {
+  if (buffer.length < 16) return null;
+  if (buffer.subarray(4, 8).toString("latin1") !== "ftyp") return null;
+
+  let best: Size | null = null;
+  let at = buffer.indexOf("tkhd", 0, "latin1");
+
+  while (at !== -1) {
+    /* version sits one byte past the 8-byte box header, and it decides the
+       width of the four time fields before the 36-byte matrix. */
+    const box = at - 4;
+    const version = buffer[box + 8];
+    const offset = box + (version === 1 ? 96 : 84);
+
+    if (box >= 0 && offset + 8 <= buffer.length) {
+      const width = buffer.readUInt32BE(offset) / 65536;
+      const height = buffer.readUInt32BE(offset + 4) / 65536;
+      if (width >= 1 && height >= 1 && (!best || width > best.width)) {
+        best = { width: Math.round(width), height: Math.round(height) };
+      }
+    }
+    at = buffer.indexOf("tkhd", at + 4, "latin1");
+  }
+
+  return best;
+}
+
 /* `src` is a public-relative URL, e.g. "/images/projects/x/Dashboard.png". */
 export function imageSize(src: string): Size {
   const cached = cache.get(src);
@@ -71,7 +108,12 @@ export function imageSize(src: string): Size {
   try {
     const file = path.join(process.cwd(), "public", decodeURIComponent(src));
     const buffer = readFileSync(file);
-    size = readPng(buffer) ?? readJpeg(buffer) ?? readGif(buffer) ?? FALLBACK;
+    size =
+      readPng(buffer) ??
+      readJpeg(buffer) ??
+      readGif(buffer) ??
+      readMp4(buffer) ??
+      FALLBACK;
   } catch {
     /* Missing or unreadable — the fallback keeps the page rendering. */
   }

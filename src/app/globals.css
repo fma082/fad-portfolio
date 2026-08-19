@@ -38,6 +38,10 @@
   --color-green: #34D399;
   --color-amber: #FBBF24;
   --color-red:   #F87171;
+  /* Warm off-white, not a hue. Countersign's surface reserves colour for
+     meaning; an accent hue would compete with amber, red and green, which are
+     the only three things on that page that mean something by being coloured. */
+  --color-bone:  #E8E4DB;
 
   /* Semantic aliases */
   --color-background: var(--color-canvas);
@@ -63,6 +67,7 @@
   [data-accent="green"]  { --accent: var(--color-green); }
   [data-accent="amber"]  { --accent: var(--color-amber); }
   [data-accent="red"]    { --accent: var(--color-red); }
+  [data-accent="bone"]   { --accent: var(--color-bone); }
 }
 
 /* Project card preview wash — multi-stop gradient, not expressible as a utility */

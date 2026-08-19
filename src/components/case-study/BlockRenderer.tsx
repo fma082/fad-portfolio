@@ -1,5 +1,6 @@
 import type { Block } from "@/types/case-study";
 import { ImageFrame } from "./ImageFrame";
+import { VideoFrame } from "./VideoFrame";
 import { ImageGrid } from "./ImageGrid";
 import {
   SectionIntro,
@@ -23,6 +24,7 @@ import {
   LinkOut,
   Cta,
 } from "./blocks/SystemBlocks";
+import { BugFlow, TierGrid, EvidenceTable } from "./blocks/GovernanceBlocks";
 import { NodeDemo } from "./blocks/NodeDemo";
 import { FigmaEmbed } from "./blocks/FigmaEmbed";
 
@@ -47,6 +49,15 @@ export function BlockRenderer({ block }: { block: Block }) {
           tag={block.tag}
         />
       );
+    case "video":
+      return (
+        <VideoFrame
+          src={block.src}
+          alt={block.alt}
+          caption={block.caption}
+          tag={block.tag}
+        />
+      );
     case "imageGrid":
       return <ImageGrid left={block.images[0]} right={block.images[1]} />;
     case "metrics":
@@ -57,6 +68,12 @@ export function BlockRenderer({ block }: { block: Block }) {
       return <CardGrid block={block} />;
     case "chips":
       return <Chips block={block} />;
+    case "bugFlow":
+      return <BugFlow block={block} />;
+    case "tierGrid":
+      return <TierGrid block={block} />;
+    case "evidenceTable":
+      return <EvidenceTable block={block} />;
     case "tokenTable":
       return <TokenTable block={block} />;
     case "componentInventory":
