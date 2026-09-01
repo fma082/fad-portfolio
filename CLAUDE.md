@@ -34,6 +34,11 @@ Accent violet #8B7BF4 · violet-dim #6B5DD3
 
 Per-project accents live as tokens too — never as inline hex:
 teal #5EEAD4 · blue #3C76F1 · green #34D399 · amber #FBBF24 · red #F87171
+bone #E8E4DB — a warm off-white, not a hue. For a surface that reserves
+colour for meaning rather than for brand.
+
+Assigned today: violet (Fluuen) · blue (Design System) · bone (Countersign).
+teal, green, amber and red are declared and free.
 
 A case study never names its accent directly. It sets `data-accent="blue"` on its
 root node; `globals.css` maps that to `--accent`, and descendants read it as
@@ -52,10 +57,16 @@ with wide tracking (`tracking-[0.2em]`), size 10–12px.
 ## Architecture
 
 - Case study blocks: `src/components/case-study/`
-- Layout primitives (Navbar, Footer, SectionHeader): `src/components/layout/`
+- Layout primitives (Navbar, Footer): `src/components/layout/`
+  `SectionHeader` is local to `page.tsx`; `SectionDivider` (a different thing)
+  lives in `case-study/`. `work/layout.tsx` still carries its own copy of the
+  nav and footer rather than importing these.
 - Case study content: `src/content/case-studies/[slug].ts` (typed data, not JSX)
 - ONE generic page renders all case studies: `src/app/work/[slug]/page.tsx`
-- **Adding a project = adding a content file.** Never a new page component.
+- **Adding a project = a content file + an entry in the `projects` array in
+  `page.tsx`.** Never a new page component. The array duplicates `title`,
+  `tags`, `type`, `desc`, `accent` and `thumb` for the home card; the content
+  file alone will not put a project on the home page.
 - Page files should stay under ~150 lines. If a page grows past that, extract.
 
 ## Projects (current, canonical list)
@@ -65,11 +76,11 @@ with wide tracking (`tracking-[0.2em]`), size 10–12px.
    No lo linkees. Lo que sí es público es `fma082/fluuen-tokens`, la fuente del
    pipeline. Las referencias a archivos del producto en `_data/fluuen.ts` son
    procedencia, no links.
-2. Countersign — repo + live demo. Accent: teal.
-3. Design System — Figma only. Accent: blue.
-
-Routes for `next-agent`, `bloyal` and `ai-patterns` are legacy stubs.
-Ask before deleting them or their assets.
+2. Countersign — repo + live demo. Accent: **bone**, not a hue. The product
+   surface spends green, amber and red on safe / reversible / destructive, and
+   a brand colour beside them would read as a fourth meaning. The reasoning is
+   already in `types/accent.ts` — keep the two in agreement.
+3. Design System — Figma + Behance. Accent: blue.
 
 ## Workflow
 
