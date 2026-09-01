@@ -402,6 +402,5 @@ export const countersignData = {
     "That the loading-state thresholds are tuned against real latency — they were never wired. What holds is the observation of bimodal TTFT (0.4–0.5s warm against several seconds cold), which invalidates a single threshold.",
     "That the statechart is a shared contract between code and Figma — true of the earlier ai-patterns project, not of Countersign, which has no verified mirror.",
     "That routing is non-deterministic, stated with a number — observed repeatedly, never counted. Qualitative only.",
-    "That `next build` is clean at 5 routes — that is a 2026-07-23 note in the Countersign DEV_STATE and was not re-run.",
   ],
 };
