@@ -310,10 +310,16 @@ function Hero() {
       className="min-h-screen flex flex-col justify-center px-6 lg:px-12 pt-14"
     >
       <div className="max-w-screen-xl mx-auto w-full py-24 lg:py-32">
-        <div className="flex items-center gap-3 mb-10">
-          <span className="w-6 h-px bg-violet shrink-0" aria-hidden />
-          <span className="font-mono text-xs tracking-[0.2em] text-fg-muted uppercase">
-            Senior Product Designer
+        <div className="flex items-start gap-3 mb-10">
+          <span className="w-6 h-px bg-violet shrink-0 mt-[0.55rem]" aria-hidden />
+          {/* Wraps between segments, never mid-name: each segment is nowrap and
+             the separator rides along with the first one so it can't lead a
+             line. aria-hidden on the dot keeps the read-out a clean phrase. */}
+          <span className="font-mono text-xs tracking-[0.2em] text-fg-muted uppercase flex flex-wrap gap-x-2">
+            <span className="whitespace-nowrap">
+              Facundo Almir&oacute;n <span aria-hidden>&middot;</span>
+            </span>
+            <span className="whitespace-nowrap">Senior Product Designer</span>
           </span>
         </div>
 
@@ -502,10 +508,10 @@ function Contact() {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            {/* TODO: confirm this address — hello@fad.design was never verified
-                as a real inbox and appears nowhere else in the project */}
+            {/* TODO: confirm hello@byfma.com resolves to a real inbox — the
+                domain move was decided, the mailbox was never verified */}
             <a
-              href="mailto:hello@fad.design"
+              href="mailto:hello@byfma.com"
               className="inline-flex items-center px-5 py-2.5 bg-violet hover:bg-violet-dim text-white font-mono text-xs tracking-widest uppercase transition-colors duration-200"
             >
               Email me

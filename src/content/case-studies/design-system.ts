@@ -120,7 +120,7 @@ export const designSystem: CaseStudy = {
   },
 
   seo: {
-    title: "Dashboard Design System — Facundo Almirón",
+    title: "Dashboard Design System",
     description:
       "A 2021 Figma design system for dashboard products — 49 component sets, 817 variants, 137 styles — published to the Figma Community.",
   },

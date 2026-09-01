@@ -25,10 +25,31 @@ const ibmPlexMono = IBM_Plex_Mono({
   weight: ["400", "500"],
 });
 
+const NAME = "Facundo Almirón";
+const TITLE = `${NAME} — Senior Product Designer`;
+const DESCRIPTION =
+  `${NAME} — Senior Product Designer. Design Systems, AI/SaaS interfaces, ` +
+  "and design-to-code workflows — and the proof that what I design gets built.";
+
 export const metadata: Metadata = {
-  title: "Facundo Almirón — Senior Product Designer",
-  description:
-    "Design Systems, AI/SaaS interfaces, and design-to-code workflows",
+  /* Case study pages set only their own title; the template appends the name
+     so a shared link always carries it. */
+  title: { default: TITLE, template: `%s — ${NAME}` },
+  description: DESCRIPTION,
+  authors: [{ name: NAME }],
+  creator: NAME,
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    siteName: "byfma",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
