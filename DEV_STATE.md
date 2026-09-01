@@ -384,10 +384,15 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
     4,88 s contra 7,54 s del anterior: el turno fue más corto porque el modelo
     respondió más rápido, y el encode usa el timeline real. Sigue siendo fiel al
     caption — el write corre, el precio viejo queda tachado, y Undo sobrevive.
-  - **Falta el deploy.** El arreglo está en el repo de Countersign, sin commitear
-    y sin deployar. Hasta que Facundo lo publique, `countersign-ai.vercel.app`
-    sigue degradado y los tres CTAs de esta case study abren un demo donde el
-    modelo no narra. **La copy no se toca; se deploya.**
+  - **Deployado** (verificado el 2026-09-01). `countersign-ai.vercel.app` corre
+    el arreglo: `groq.ts` defaultea a `openai/gpt-oss-20b` y Vercel no tiene
+    `GROQ_MODEL` seteada, así que el default es lo que sirve el deploy. Los tres
+    CTAs de esta case study abren un demo donde el modelo narra. La copy nunca
+    se tocó — se deployó, que era la salida correcta.
+    El `MODEL PAUSED` que todavía aparece a veces **no es el modelo
+    decomisionado**: es saturación de tokens del free tier de Groq. Mismo card,
+    causa distinta. Antes de leerlo como una regresión del modelo, mirar la
+    cuota.
   - **Flake conocido, no arreglado:** `record.mjs` falló 4 veces seguidas en el
     paso 04 (el modelo ruteó el prompt destructivo a otra cosa y completó, sin
     abrir el gate) y salió a la quinta, mientras `shots.mjs`, `cover.mjs` y
