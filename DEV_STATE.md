@@ -741,32 +741,23 @@ si alguna vez hacen falta.
 
 ## Deploy
 
-**No existe ninguna branch `main`.** Esta sección decía "`main` → producción" y
-era falso; corregido el 2026-08-07 después de verificarlo contra el repo y contra
-el sitio en vivo. Si alguna sesión razona sobre un `main`, está razonando sobre
-una branch que no existe.
+La default del repo fue `claude/portfolio-nextjs-conversion-Hj9oO` hasta que se
+creó un `main` de verdad — la tercera de las opciones que esta nota evaluaba.
+Verificado el 2026-09-01 contra GitHub y contra producción.
 
 | | |
 |---|---|
-| Branch default del repo | `claude/portfolio-nextjs-conversion-Hj9oO` |
-| Producción | `fad-portfolio-seven.vercel.app`, deploya de la default |
-| Último commit de la default | `d88af4d`, **2026-04-28** |
-| Branch de trabajo | `fase-2/case-study-engine` |
+| Branch default del repo | `main` |
+| Producción | `byfma.com`, deploya de la default. `fad-portfolio-seven.vercel.app` sigue vivo como fallback |
 
-**Producción está sirviendo el portfolio de abril y ninguna case study nueva.**
-Verificado el 2026-08-07: `/work/deftboard`, `/work/next-agent`, `/work/bloyal` y
-`/work/ai-patterns` responden 200 —los cuatro stubs que esta misma nota dice que
-se borraron el 2026-08-03, borrados en la branch y no en producción— y
-`/work/fluuen` y `/work/design-system` dan 404. La home de producción todavía
-habla de Deftboard y no menciona ni Fluuen ni Countersign.
+`main` contiene `fase-2/case-study-engine` entera (fast-forward, cero commits
+divergentes) y va 31 commits adelante de la vieja default, que sigue existiendo
+en el remoto sin ser default de nada.
 
-Toda la Fase 2 vive en `fase-2/case-study-engine`, **24 commits adelante** y
-**fast-forward puro**: contiene la default entera, cero commits divergentes. Se
-publica cuando Facundo lo decida — el 2026-08-07 eligió esperar a Countersign,
-que **está terminada desde el 2026-08-18**. La condición que difería la
-publicación ya no aplica; falta la decisión.
-Las opciones evaluadas fueron: mergear a la default, cambiar la Production Branch
-en Vercel, o crear un `main` de verdad y ponerlo de default.
+Producción sirve las tres case studies: `/work/fluuen`, `/work/countersign` y
+`/work/design-system` responden 200. Los cuatro stubs — `/work/deftboard`,
+`/work/next-agent`, `/work/bloyal`, `/work/ai-patterns` — dan 404. Es la
+situación inversa a la del 2026-08-07, que esta nota describía.
 
 **Los previews están detrás de Deployment Protection.** Cualquier branch genera
 su preview, pero pedirlo sin sesión devuelve `<title>Login – Vercel</title>`, no
