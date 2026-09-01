@@ -361,7 +361,7 @@ export const countersign: CaseStudy = {
     ...live,
   ],
   seo: {
-    title: "Countersign — governance for an AI agent that writes",
+    title: "Countersign — governance for an AI agent",
     description: `An AI agent operating an admin panel under ${publishedTiers.length} governance tiers, with a human checkpoint before anything irreversible — and the bug that made the tool surface, not the prompt, the thing to design.`,
   },
 };

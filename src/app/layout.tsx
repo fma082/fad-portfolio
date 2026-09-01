@@ -32,6 +32,7 @@ const DESCRIPTION =
   "and design-to-code workflows — and the proof that what I design gets built.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://byfma.com"),
   /* Case study pages set only their own title; the template appends the name
      so a shared link always carries it. */
   title: { default: TITLE, template: `%s — ${NAME}` },
@@ -41,6 +42,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
+    url: "https://byfma.com",
     siteName: "byfma",
     locale: "en_US",
     type: "website",
