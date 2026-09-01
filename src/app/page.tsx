@@ -508,8 +508,6 @@ function Contact() {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            {/* TODO: confirm hello@byfma.com resolves to a real inbox — the
-                domain move was decided, the mailbox was never verified */}
             <a
               href="mailto:hello@byfma.com"
               className="inline-flex items-center px-5 py-2.5 bg-violet hover:bg-violet-dim text-white font-mono text-xs tracking-widest uppercase transition-colors duration-200"
