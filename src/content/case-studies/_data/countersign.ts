@@ -398,7 +398,7 @@ export const countersignData = {
   },
   /* Things a future session might be tempted to assert. None is supported. */
   unsupported: [
-    "THAT THE LIVE DEPLOY IS ALREADY ON THE WORKING MODEL. Fixed in the Countersign repo on 2026-08-18 — `groq.ts` now defaults to `openai/gpt-oss-20b`, and Vercel never set `GROQ_MODEL`, so the default is what the deploy uses — but the fix reaches countersign-ai.vercel.app only on the next deploy. Until then every turn there still falls through the retry→degrade path and renders the `MODEL PAUSED` card, and the page's copy ('Real: the agent runs against a real model', 'This runs against a real model') stays true of the project and false of the deploy. Do not soften the copy — ship the deploy.",
+    "That the `MODEL PAUSED` card is gone for good. The model fix shipped — `groq.ts` defaults to `openai/gpt-oss-20b`, Vercel sets no `GROQ_MODEL`, and the live deploy has run the working model since 2026-09-01 — but the retry→degrade path is still reachable on Groq free-tier token saturation. Same card, different cause. Seeing it is not evidence that the model regressed; check the quota first.",
     "That the loading-state thresholds are tuned against real latency — they were never wired. What holds is the observation of bimodal TTFT (0.4–0.5s warm against several seconds cold), which invalidates a single threshold.",
     "That the statechart is a shared contract between code and Figma — true of the earlier ai-patterns project, not of Countersign, which has no verified mirror.",
     "That routing is non-deterministic, stated with a number — observed repeatedly, never counted. Qualitative only.",
