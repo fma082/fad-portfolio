@@ -3,7 +3,7 @@
 Estado vivo del proyecto. Claude Code: leé esto al empezar cada sesión.
 Actualizalo al cerrar una fase o después de una decisión de arquitectura.
 
-Última actualización: 2026-08-18
+Última actualización: 2026-09-02
 
 ---
 
@@ -439,6 +439,35 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
   argumentos malos, no un nivel de fricción, y meterlo en una escala sobre lo
   difícil que es deshacer algo lo archivaría mal. Está en `_data` con
   `published: false`, que es también de dónde sale el `3` de la barra de stats.
+- **La OG image se genera con `next/og`, y sus colores se parsean de
+  `globals.css`** (2026-09-02). `src/app/opengraph-image.tsx` renderiza la card
+  de 1200×630 en build time (sale `○ Static` en el build). Cuatro cosas que
+  parecen rodeos y no lo son:
+  - **Las fuentes van vendorizadas como `.ttf`** en `src/assets/fonts/`, con sus
+    OFL al lado. `next/font` no sirve acá: cachea **woff2** bajo nombres
+    hasheados, y Satori —el renderer de `next/og`— lee solo ttf/otf/woff. No es
+    duplicación evitable, es el único formato que el renderer acepta. Van solo
+    Instrument Serif e IBM Plex Mono: el wordmark es mono igual que el navbar,
+    así que DM Sans no entra.
+  - **Los hex se leen del bloque `@theme` en build time**, no se escriben en el
+    archivo. Satori no resuelve CSS: no ve `globals.css`, ni las clases de
+    Tailwind, ni `var(--color-*)`. Todo valor tiene que llegar literal, así que
+    el archivo parsea los tokens que usa y **tira si falta uno**, en vez de
+    renderizar el color equivocado en silencio. Es la única excepción viva a
+    "tokens first", y existe por el renderer, no por comodidad.
+    **Si una sesión futura "simplifica" ese parser hardcodeando los hex, eso es
+    el regreso**: la card dejaría de seguir a los tokens y nadie se enteraría
+    hasta verla en un feed.
+  - **La reglita violeta va a 3px**, no a los 2px que da escalar el `h-px` del
+    hero. Un feed renderiza la card a la mitad de tamaño y a 2px el único acento
+    de la composición cae abajo de un píxel. Fidelidad al hero contra
+    legibilidad en el destino real: ganó el destino.
+  - **El conjunto va 8px arriba del centro geométrico.** Un bloque centrado a la
+    matemática se lee hundido. Se midió decodificando el PNG y listando las
+    filas con tinta, no a ojo: wordmark 190–214, label 252–268, nombre 331–423.
+    Si alguien "centra bien" ese bloque, lo está desalineando.
+  - `twitter:image` lo cablea Next desde el mismo archivo — **no** hace falta un
+    `twitter-image.tsx` aparte.
 
 ---
 
@@ -466,6 +495,9 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
 - [x] Case study: Countersign (`/work/countersign`) — 2026-08-18. Bloques
       nuevos: `video`, `bugFlow`, `tierGrid`, `evidenceTable`. Accent nuevo:
       `bone`. Card de la home linkeada.
+- [x] Open Graph image generada con `next/og` (2026-09-02). Live en producción:
+      `byfma.com/opengraph-image` devuelve el PNG y es byte a byte el render
+      aprobado.
 
 ---
 
@@ -473,7 +505,8 @@ La Fase 1 (home + primer case study + tokens) está cerrada y en producción.
 
 - **Archivos de página monolíticos.** `src/app/page.tsx` **creció**: 510 → 464 al
   sacar Navbar y Footer, y 464 → 529 al agregarle a `ProjectCard` los tres
-  estados de link. Sacar dos componentes chicos no compensa meter lógica nueva.
+  estados de link. **Medido el 2026-09-02: 548.** Sacar dos componentes chicos
+  no compensa meter lógica nueva.
   Lo que queda adentro son las cinco secciones de la home (Hero, WhatIDo,
   ProofOfWork, About, Contact) más `ProjectCard` y su data. **`ProjectCard` es el
   próximo a extraer** — ya no es markup, tiene ramas.
@@ -547,7 +580,8 @@ la case study argumenta que no se trata de eso.
 
 ### Cards de la home (2026-08-03)
 
-Tres proyectos: **Fluuen** (destacada, violet) · **Countersign** (teal) ·
+Tres proyectos: **Fluuen** (destacada, violet) · **Countersign** (~~teal~~
+**bone** desde el 2026-08-18, ver decisiones cerradas) ·
 **Dashboard Design System** (blue). `next-agent` era Fluuen con el nombre viejo,
 no un proyecto aparte. `bloyal` salió del portfolio (era trabajo con NDA) y
 `ai-patterns` no va como case study propia: ese research se absorbe como
@@ -690,7 +724,9 @@ ratio escrito en ningún content file. Los nombres con espacio van por
 
 ### Pendiente en `/work/fluuen`
 
-Dos `TODO: copy needed`, los dos de argumento, no de dato:
+~~Dos `TODO: copy needed`~~ — **los dos se escribieron.** Verificado el
+2026-09-02: no queda ningún `TODO` en `src/content/case-studies/fluuen.ts`.
+Se dejan anotados porque describen qué argumento sostiene cada sección:
 
 - **01 · Where truth lives** — por qué el borde "las pantallas viven solo en
   código" es decisión de sistema y no excusa por no haberlas dibujado. El hecho
@@ -715,7 +751,8 @@ verificadas, no la lista de features que no se construyeron.
 Nada bloquea la página: las 7 secciones están completas y ningún
 `TODO: copy needed` quedó abierto. Lo que sí queda:
 
-- **`.DS_Store` está commiteado** en esa carpeta de assets.
+- ~~**`.DS_Store` está commiteado**~~ — verificado el 2026-09-02, ya no está
+  trackeado (`git ls-files` no lo lista).
 - **Números verificados que la página NO publica**, guardados igual en `_data`
   porque el prototipo no les dio lugar: el ancho del panel (380 spec / 379
   construido), los 6 sales vencidas, los 3 vendiendo bajo costo, el throttle de
