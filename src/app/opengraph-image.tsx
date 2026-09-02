@@ -6,6 +6,17 @@ export const alt = "Facundo Almirón — Senior Product Designer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+/* Equal on all four sides, and deliberately generous: some platforms crop the
+   card to their own aspect ratio, and a margin that only looks safe at 1200x630
+   is the first thing they eat. Nothing that has to be read lives outside it. */
+const PAD = 80;
+
+/* Wordmark to rule. Short enough to read as family rather than as a section
+   break, and deliberately tighter than the 40px between the label and the name
+   so the grouping runs one way: the mark joins the label, the label joins the
+   name, and the three arrive as one object. */
+const FAMILY_GAP = 28;
+
 /* Satori resolves no CSS: it never sees globals.css, Tailwind classes or
    `var(--color-*)`. Every value below has to arrive as a literal — so rather
    than copying the hex codes here (and letting them drift the first time a
@@ -53,19 +64,26 @@ export default async function Image() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
-          padding: 80,
+          justifyContent: "center",
+          padding: PAD,
           backgroundColor: color.canvas,
           fontFamily: "IBM Plex Mono",
         }}
       >
-        {/* Same treatment as the navbar wordmark: mono, medium, `by` faint. */}
-        <div style={{ display: "flex", fontSize: 26, fontWeight: 500 }}>
-          <span style={{ color: color["fg-faint"] }}>by</span>
-          <span style={{ color: color.fg }}>fma</span>
-        </div>
-
         <div style={{ display: "flex", flexDirection: "column" }}>
+          {/* Same treatment as the navbar wordmark: mono, medium, `by` faint. */}
+          <div
+            style={{
+              display: "flex",
+              fontSize: 26,
+              fontWeight: 500,
+              marginBottom: FAMILY_GAP,
+            }}
+          >
+            <span style={{ color: color["fg-faint"] }}>by</span>
+            <span style={{ color: color.fg }}>fma</span>
+          </div>
+
           {/* The hero's rule + label pair — the rule is what anchors the
               label there, and it does the same job here. Scaled from `h-px`
               it would land on 2px, but a feed renders this card at roughly
@@ -88,9 +106,9 @@ export default async function Image() {
 
           <div
             style={{
-              marginTop: 44,
+              marginTop: 40,
               fontFamily: "Instrument Serif",
-              fontSize: 160,
+              fontSize: 124,
               lineHeight: 1.08,
               letterSpacing: "-0.025em",
               color: color.fg,
